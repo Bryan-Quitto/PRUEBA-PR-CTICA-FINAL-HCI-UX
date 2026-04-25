@@ -7,6 +7,13 @@
   --color-page: #f0f4f8;
   --color-muted: #374151;
   
+  /* Jerarquía visual por color — Principio: Color */
+  /* Establece niveles de importancia para reducir carga cognitiva */
+  --color-hierarchy-l1: #003366;   /* Nivel 1 — cabeceras principales de sección */
+  --color-hierarchy-l2: #1e40af;   /* Nivel 2 — sub-secciones y tabs activos     */
+  --color-hierarchy-l3: #374151;   /* Nivel 3 — texto de campos y etiquetas      */
+  --color-hierarchy-accent: #2563eb; /* Acento — CTAs primarios                 */
+  
   --animate-gd-float: gd-float 9s ease-in-out infinite;
   --animate-gd-float-reverse: gd-float 13s ease-in-out infinite reverse;
   --animate-gd-float-delayed: gd-float 7s ease-in-out infinite 2s;

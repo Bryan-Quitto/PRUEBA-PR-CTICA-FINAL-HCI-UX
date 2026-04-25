@@ -250,7 +250,7 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
           <>
             {(testPlan.method || testPlan.duration || testPlan.location_channel) && (
               <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Contexto de la sesión</h2>
+                <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Contexto de la sesión</h2>
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {testPlan.method && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-500 uppercase tracking-widest">Método</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.method}</div></div>)}
@@ -262,7 +262,7 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
             )}
 
             <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Inicio de la sesión</h2>
+              <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Inicio de la sesión</h2>
               <div className="p-6">
                 <ol className="p-0 m-0 list-none space-y-3">
                   {openingSteps.map((step, index) => (
@@ -277,7 +277,7 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
 
             {/* ── Tareas ── */}
             <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
+              <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
                 Tareas a leer durante el test
                 {planTasks.length > 0 && (
                   <span className="ml-2 text-emerald-300 text-[0.7rem] font-bold normal-case">
@@ -335,7 +335,7 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
 
             {/* ── Cierre ── */}
             <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Cierre</h2>
+              <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Cierre</h2>
               <div className="p-6">
                 <div className="flex flex-col gap-8">
                   {(testPlan.closing_questions || []).map((q: ClosingQuestion, index: number) => (

@@ -242,7 +242,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
       <div className="space-y-8">
         {/* ── 1. Contexto general ── */}
         <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">1. Contexto general</h2>
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">1. Contexto general</h2>
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
@@ -349,7 +349,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* ── 2. Tareas del test ── */}
         <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
             <span>2. Tareas del test</span>
             <span className={`text-sm font-bold normal-case tracking-normal ${tasks.length >= 10 ? 'text-red-300' : 'text-white/70'}`}>
               {tasks.length}/10 tareas{tasks.length >= 10 && ' — límite alcanzado'}
@@ -410,7 +410,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* ── 3. Roles y logística ── */}
         <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">3. Roles y logística</h2>
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">3. Roles y logística</h2>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="flex flex-col gap-2">
@@ -457,7 +457,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* ── 4. Notas del moderador ── */}
         <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">4. Notas del moderador</h2>
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">4. Notas del moderador</h2>
           <div className="p-6">
             <label htmlFor="moderator-notes" className="sr-only">Notas adicionales del moderador</label>
             <AutoGrowTextarea id="moderator-notes"

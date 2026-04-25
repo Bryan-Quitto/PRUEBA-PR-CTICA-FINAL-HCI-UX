@@ -38,7 +38,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
             id={`${tab.id}-tab`}
             className={`px-4 md:px-6 py-3 border-none font-bold cursor-pointer rounded-t-lg text-[0.9rem] transition-all whitespace-nowrap flex-shrink-0 flex items-center gap-2 ${
               activeTab === tab.id 
-                ? 'bg-navy text-white' 
+                ? 'bg-hierarchy-l2 text-white' 
                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-navy'
             }`}
             onMouseDown={(e) => {

@@ -225,14 +225,14 @@ export const PlanView: React.FC<PlanViewProps> = ({
   const dateError = touched.test_date ? validateDate(localPlan.test_date) : null;
 
   const warn = {
-    product:          touched.product && (!localPlan.product || localPlan.product.trim() === ''),
-    objective:        touched.objective && (!localPlan.objective || localPlan.objective.trim() === ''),
-    user_profile:     touched.user_profile && (!localPlan.user_profile || localPlan.user_profile.trim() === ''),
-    test_date:        !!dateError,
-    method:           touched.method && (!localPlan.method || localPlan.method.trim() === ''),
+    product: touched.product && (!localPlan.product || localPlan.product.trim() === ''),
+    objective: touched.objective && (!localPlan.objective || localPlan.objective.trim() === ''),
+    user_profile: touched.user_profile && (!localPlan.user_profile || localPlan.user_profile.trim() === ''),
+    test_date: !!dateError,
+    method: touched.method && (!localPlan.method || localPlan.method.trim() === ''),
     location_channel: touched.location_channel && (!localPlan.location_channel || localPlan.location_channel.trim() === ''),
-    moderator:        touched.moderator && (!localPlan.moderator || localPlan.moderator.trim() === ''),
-    duration:         touched.duration && (!localPlan.duration || localPlan.duration.trim() === ''),
+    moderator: touched.moderator && (!localPlan.moderator || localPlan.moderator.trim() === ''),
+    duration: touched.duration && (!localPlan.duration || localPlan.duration.trim() === ''),
   };
 
   const twoWeeksAgo = new Date();
@@ -240,22 +240,10 @@ export const PlanView: React.FC<PlanViewProps> = ({
   const minDate = twoWeeksAgo.toISOString().split('T')[0];
 
   return (
-    /*
-     * [Fase 4 — Espacio] animate-in + fade-in para entrada suave.
-     * El espacio interno de cada sección (p-6 = 24px) vs el espacio
-     * entre secciones (space-y-8 = 32px) mantiene la ratio ≥ 1.3×
-     * recomendada por NNGroup para separación de grupos.
-     */
     <main id="plan-panel" className="animate-in fade-in duration-500">
 
-      {/* Header de vista — nivel L1 de la jerarquía */}
       <header className="flex items-center justify-between bg-navy text-white p-4 md:px-6 rounded-xl mb-8 shadow-md min-h-[70px] gap-4">
         <div className="flex-1" />
-        {/*
-          [Fase 3 — Contraste] Texto blanco sobre navy = ratio 12.6:1 ✓ WCAG AAA.
-          Este es el elemento de mayor contraste de la vista, reforzando
-          que es el título principal (nivel 1 de la jerarquía por contraste).
-        */}
         <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1 text-white">
           Plan de Pruebas de Usabilidad
         </h2>
@@ -272,32 +260,41 @@ export const PlanView: React.FC<PlanViewProps> = ({
         </div>
       </header>
 
-      {/*
-        [Fase 4 — Espacio] space-y-8 = 32px entre secciones.
-        Cada sección tiene p-6 = 24px interno.
-        Ratio exterior/interior = 32/24 ≈ 1.33× (cumple Ley de Proximidad).
-        Las secciones se perciben como grupos distintos sin necesidad de leer
-        los encabezados (procesamiento pre-atentivo por espacio).
-      */}
       <div className="space-y-8">
 
         {/* ── 1. Contexto general ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           {/*
-            [Fase 2 — Color] bg-hierarchy-l1 (#003366) es el color más oscuro
-            del sistema de diseño → señal L1 de jerarquía visual.
-            [Fase 1 — Tamaño] text-base font-bold uppercase = H2 semántico y visual.
+            [Fase 5 — Guía de atención] El dot de estado en el header comunica
+            pre-atentivamente si la sección está completa o tiene campos pendientes.
+            Verde (emerald) = sección completa → puede avanzar.
+            Ámbar (amber) = sección incompleta → requiere atención.
+            El dot es procesado por el sistema visual antes de leer el texto
+            (principio de pre-atención, Ware 2004). Implementa Nielsen #1
+            (Visibilidad del estado del sistema) sin texto adicional.
+            aria-label en el dot describe el estado para lectores de pantalla.
           */}
-          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
-            1. Contexto general
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
+            <span>1. Contexto general</span>
+            {/* Dot: verde si product + objective + user_profile + method + duration + location_channel tienen valor */}
+            <span
+              className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.product && localPlan.objective && localPlan.user_profile &&
+                  localPlan.method && localPlan.duration && localPlan.location_channel
+                  ? 'bg-emerald-400'
+                  : 'bg-amber-400'
+                }`}
+              aria-label={
+                localPlan.product && localPlan.objective && localPlan.user_profile &&
+                  localPlan.method && localPlan.duration && localPlan.location_channel
+                  ? 'Sección completa'
+                  : 'Sección incompleta — hay campos obligatorios vacíos'
+              }
+            />
           </h2>
 
-          {/* [Fase 4 — Espacio] p-6 (24px) interno con gap-6 (24px) entre campos.
-              Dentro del grupo los campos tienen igual espaciado → se perciben como familia. */}
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="field-group">
-                {/* [Fase 3 — Contraste] text-slate-700 (#334155) ratio 8:1 ✓ */}
                 <label htmlFor="product-name" className="text-sm font-bold text-slate-700 flex items-center gap-2">
                   Producto / servicio:
                   <span className="text-red-600" aria-hidden="true">*</span>
@@ -392,8 +389,6 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <label htmlFor="test-date" className="text-sm font-bold text-slate-700">
                   Fecha del test: <span className="text-red-600" aria-hidden="true">*</span>
                   <span className="sr-only">(obligatorio)</span>
-                  {/* [Fase 3 — Contraste] Aclaración en text-slate-500 (nivel 3) — visualmente
-                      secundaria respecto al label principal (nivel 2 text-slate-700) */}
                   <span className="text-slate-400 font-normal text-xs ml-1">(máx. 2 semanas atrás)</span>
                 </label>
                 <input id="test-date" type="date" min={minDate}
@@ -427,12 +422,17 @@ export const PlanView: React.FC<PlanViewProps> = ({
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
             <span>2. Tareas del test</span>
-            {/* [Fase 3 — Contraste] Contador en text-red-300 sobre navy cuando límite:
-                contraste reducido deliberadamente (es info secundaria), sube a atención
-                solo cuando hay urgencia (límite alcanzado). */}
-            <span className={`text-sm font-bold normal-case tracking-normal ${tasks.length >= 10 ? 'text-red-300' : 'text-white/70'}`}>
-              {tasks.length}/10 tareas{tasks.length >= 10 && ' — límite alcanzado'}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className={`text-sm font-bold normal-case tracking-normal ${tasks.length >= 10 ? 'text-red-300' : 'text-white/70'}`}>
+                {tasks.length}/10 tareas{tasks.length >= 10 && ' — límite alcanzado'}
+              </span>
+              {/* Dot: verde si hay al menos 1 tarea, ámbar si no hay ninguna */}
+              <span
+                className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${tasks.length > 0 ? 'bg-emerald-400' : 'bg-amber-400'
+                  }`}
+                aria-label={tasks.length > 0 ? 'Sección completa' : 'Sección incompleta — añade al menos una tarea'}
+              />
+            </div>
           </h2>
 
           {isMobile && (
@@ -460,8 +460,6 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <table className="w-full border-collapse">
                   <caption className="sr-only">Listado de tareas detalladas para la prueba de usabilidad</caption>
                   <thead>
-                    {/* [Fase 2 — Color] bg-navy en thead → mismo L1 que el section header,
-                        pero thead tiene menor tamaño de fuente → jerarquía interna de la tabla */}
                     <tr className="bg-navy text-white text-[0.75rem] font-black uppercase tracking-[0.1em]">
                       <th scope="col" className="p-4 text-center border-r border-white/10 w-[60px]">ID</th>
                       <th scope="col" className="p-4 text-left border-r border-white/10">Escenario / tarea</th>
@@ -482,9 +480,6 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   </tbody>
                 </table>
               </div>
-              {/* [Fase 4 — Espacio] bg-slate-50 + border-t crea separación visual entre
-                  el contenido de la tabla y las acciones: el cambio de fondo actúa como
-                  divisor espacial sin necesidad de un <hr> explícito. */}
               <div className="p-4 px-6 bg-slate-50 border-t border-slate-200 flex items-center gap-4">
                 <button type="button"
                   className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-emerald-200 active:scale-[0.97] ring-2 ring-emerald-300 ring-offset-1"
@@ -500,10 +495,15 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* ── 3. Roles y logística ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">3. Roles y logística</h2>
-          {/* [Fase 4 — Espacio] p-6 interno con grid gap-6.
-              El espacio entre las 4 columnas (24px) ≈ espacio interno del campo (p-3 = 12px × 2),
-              comunicando que todos los campos son del mismo nivel jerárquico. */}
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
+            <span>3. Roles y logística</span>
+            {/* Dot: verde si moderador tiene valor (campo mínimo obligatorio de esta sección) */}
+            <span
+              className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.moderator ? 'bg-emerald-400' : 'bg-amber-400'
+                }`}
+              aria-label={localPlan.moderator ? 'Sección completa' : 'Sección incompleta — el campo Moderador es obligatorio'}
+            />
+          </h2>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="field-group">
@@ -556,10 +556,14 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* ── 4. Notas del moderador ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">4. Notas del moderador</h2>
-          {/* [Fase 4 — Espacio] p-6 consistente con todas las demás secciones.
-              El textarea tiene min-h-[120px] → espacio visual que comunica
-              "aquí hay espacio para escribir", guiando la acción del usuario. */}
+          {/*
+            Sección 4 — sin dot obligatorio: las notas del moderador son
+            opcionales. El dot no aplica aquí para no crear falsa urgencia
+            en campos que no son críticos para el flujo.
+          */}
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
+            4. Notas del moderador
+          </h2>
           <div className="p-6">
             <label htmlFor="moderator-notes" className="sr-only">Notas adicionales del moderador</label>
             <AutoGrowTextarea id="moderator-notes"

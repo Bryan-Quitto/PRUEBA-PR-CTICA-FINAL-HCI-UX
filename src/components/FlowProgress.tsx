@@ -21,15 +21,18 @@ const steps = [
 /**
  * Indicador de progreso del flujo de usabilidad.
  *
- * [Fase 4 — Espacio] Padding interno p-5 (20px) con separación de pasos
- * mediante conectores flex-1. El espacio entre el encabezado y los pasos
- * (mb-4) es mayor que el espacio entre paso y etiqueta (gap-1.5), aplicando
- * la Ley de Proximidad de Gestalt: elementos más cercanos = mismo grupo.
+ * [Fase 4 — Espacio] Padding interno p-5 con separación de pasos
+ * mediante conectores flex-1. El espacio entre el encabezado y los
+ * pasos (mb-4) es mayor que el espacio entre paso y etiqueta (gap-1.5),
+ * aplicando la Ley de Proximidad de Gestalt.
  *
- * [Fase 4 — Espacio / Guía de atención] El paso activo recibe ring-4 y
- * scale-110: el tamaño mayor actúa como señal pre-atentiva que indica
- * "estás aquí" sin requerir lectura consciente. Esto implementa el
- * principio de Nielsen #1 (Visibilidad del estado del sistema).
+ * [Fase 5 — Guía de atención] El paso activo recibe ring-4 ring-navy/20
+ * y scale-110: tamaño mayor + anillo de enfoque actúan como señal
+ * pre-atentiva de "estás aquí" sin requerir lectura consciente.
+ * Implementa Nielsen #1 (Visibilidad del estado del sistema).
+ * Los pasos completados usan emerald para comunicar logro.
+ * Los pasos pendientes usan slate neutro para no competir visualmente
+ * con el paso activo — jerarquía de atención por contraste relativo.
  */
 export const FlowProgress: React.FC<FlowProgressProps> = ({
   activeTab, testPlan, tasksCount, observationsCount, findingsCount,
@@ -49,7 +52,7 @@ export const FlowProgress: React.FC<FlowProgressProps> = ({
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4 shadow-sm">
 
-      {/* Encabezado — espacio inferior mb-2 separa título de la barra */}
+      {/* Encabezado */}
       <div className="flex justify-between items-center mb-2">
         <span className="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-widest">
           Progreso del plan
@@ -59,7 +62,7 @@ export const FlowProgress: React.FC<FlowProgressProps> = ({
         </span>
       </div>
 
-      {/* Barra global — mb-4 (16px) separa la barra de los pasos */}
+      {/* Barra global */}
       <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mb-4">
         <div
           className="h-full rounded-full bg-gradient-to-r from-navy to-blue-500 transition-all duration-700"
@@ -72,7 +75,7 @@ export const FlowProgress: React.FC<FlowProgressProps> = ({
         />
       </div>
 
-      {/* Pasos — flex con conectores flex-1 entre ellos */}
+      {/* Pasos */}
       <div className="flex items-center w-full">
         {steps.map((step, idx) => {
           const complete   = isStepComplete(step.id);
@@ -84,12 +87,14 @@ export const FlowProgress: React.FC<FlowProgressProps> = ({
             <React.Fragment key={step.id}>
               <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
                 {/*
-                  [Fase 4 — Espacio/Guía de atención]
-                  Paso activo: w-9 h-9 + ring-4 ring-navy/20 + scale-110
-                  → es un 12% más grande que los demás (w-8 h-8), señal
-                  pre-atentiva de "posición actual" (tamaño como jerarquía).
-                  Paso completado: emerald con ✓ icono.
-                  Paso pendiente: slate neutro, sin peso visual.
+                  [Fase 5 — Guía de atención]
+                  Activo: w-9 h-9 + ring-4 ring-navy/20 + scale-110
+                    → 12% más grande + anillo exterior = señal pre-atentiva doble.
+                    El usuario detecta "dónde está" antes de leer la etiqueta.
+                  Completo: emerald w-8 h-8 → logro visual sin competir con activo.
+                  Pendiente: slate w-8 h-8 → neutro, no roba atención.
+                  Esta jerarquía de atención sigue el principio de pre-atención
+                  visual (Ware, 2004): tamaño + color saturado atraen primero.
                 */}
                 <div
                   className={`rounded-full flex items-center justify-center text-[0.7rem] font-extrabold border-2 transition-all duration-300 ${
@@ -106,13 +111,13 @@ export const FlowProgress: React.FC<FlowProgressProps> = ({
                 </div>
 
                 <span className={`text-[0.6rem] font-bold whitespace-nowrap transition-colors ${
-                  complete ? 'text-emerald-600' : active ? 'text-navy' : 'text-slate-500'
+                  complete ? 'text-emerald-600' : active ? 'text-navy font-extrabold' : 'text-slate-500'
                 }`}>
                   {step.label}
                 </span>
               </div>
 
-              {/* Conector entre pasos — se colorea cuando el paso izquierdo está completo */}
+              {/* Conector — verde cuando el paso izquierdo está completo */}
               {!isLast && (
                 <div className={`flex-1 h-0.5 mx-1 mb-4 rounded-full transition-all duration-500 ${
                   complete ? 'bg-emerald-500' : 'bg-slate-200'

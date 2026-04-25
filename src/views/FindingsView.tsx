@@ -18,24 +18,24 @@ function useWindowWidth() {
 }
 
 const SEVERITY_STYLES: Record<Severity, { bg: string; text: string; border: string }> = {
-  Baja:    { bg: 'bg-green-50',  text: 'text-green-900',  border: 'border-green-200' },
-  Media:   { bg: 'bg-amber-50',  text: 'text-amber-900',  border: 'border-amber-200' },
-  Alta:    { bg: 'bg-orange-50', text: 'text-orange-900', border: 'border-orange-200' },
-  Crítica: { bg: 'bg-red-50',    text: 'text-red-900',    border: 'border-red-200' },
+  Baja: { bg: 'bg-green-50', text: 'text-green-900', border: 'border-green-200' },
+  Media: { bg: 'bg-amber-50', text: 'text-amber-900', border: 'border-amber-200' },
+  Alta: { bg: 'bg-orange-50', text: 'text-orange-900', border: 'border-orange-200' },
+  Crítica: { bg: 'bg-red-50', text: 'text-red-900', border: 'border-red-200' },
 };
 
 const SEVERITY_WEIGHTS: Record<Severity, number> = { 'Crítica': 4, 'Alta': 3, 'Media': 2, 'Baja': 1 };
 
 const PRIORITY_STYLES: Record<Priority, { bg: string; text: string; border: string }> = {
-  Baja:  { bg: 'bg-blue-50',    text: 'text-blue-900',   border: 'border-blue-200' },
-  Media: { bg: 'bg-yellow-50',  text: 'text-yellow-900', border: 'border-yellow-200' },
-  Alta:  { bg: 'bg-purple-50',  text: 'text-purple-900', border: 'border-purple-200' },
+  Baja: { bg: 'bg-blue-50', text: 'text-blue-900', border: 'border-blue-200' },
+  Media: { bg: 'bg-yellow-50', text: 'text-yellow-900', border: 'border-yellow-200' },
+  Alta: { bg: 'bg-purple-50', text: 'text-purple-900', border: 'border-purple-200' },
 };
 
 const STATUS_STYLES: Record<TaskStatus, { bg: string; text: string; border: string; icon: string }> = {
-  Pendiente:     { bg: 'bg-slate-50',  text: 'text-slate-700',  border: 'border-slate-200',  icon: '⏳' },
+  Pendiente: { bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200', icon: '⏳' },
   'En progreso': { bg: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200', icon: '🔄' },
-  Resuelto:      { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  icon: '✅' },
+  Resuelto: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-200', icon: '✅' },
 };
 
 const Tooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => {
@@ -119,7 +119,7 @@ const FindingCard: React.FC<{
 
       <div className="p-4 flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor={`find-problem-${f.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Problema detectado *</label>
+          <label htmlFor={`find-problem-${f.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Problema detectado *</label>
           <AutoGrowTextarea id={`find-problem-${f.id}`}
             className={fieldClass(warnProblem, "w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all font-bold", 'error')}
             value={f.problem || ''} onChange={e => handleChange('problem', e.target.value)}
@@ -129,7 +129,7 @@ const FindingCard: React.FC<{
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor={`find-evidence-${f.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Evidencia observada *</label>
+          <label htmlFor={`find-evidence-${f.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Evidencia observada *</label>
           <AutoGrowTextarea id={`find-evidence-${f.id}`}
             className={fieldClass(warnEvidence, "w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all font-medium italic", 'error')}
             value={f.evidence || ''} onChange={e => handleChange('evidence', e.target.value)}
@@ -140,14 +140,14 @@ const FindingCard: React.FC<{
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={`find-frequency-${f.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Frecuencia</label>
+            <label htmlFor={`find-frequency-${f.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Frecuencia</label>
             <input id={`find-frequency-${f.id}`} maxLength={20}
               className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all font-mono"
               value={f.frequency || ''} onChange={e => onSync({ frequency: e.target.value })}
               onBlur={e => onAction(() => onSave(f.id!, { frequency: e.target.value }))} placeholder="Ej. 4/5" />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={`find-severity-${f.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest flex items-center gap-1.5">Severidad <Tooltip text="Nivel de impacto del problema en la experiencia del usuario."><Info size={12} className="text-slate-400" /></Tooltip></label>
+            <label htmlFor={`find-severity-${f.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest flex items-center gap-1.5">Severidad <Tooltip text="Nivel de impacto del problema en la experiencia del usuario."><Info size={12} className="text-slate-400" /></Tooltip></label>
             <select id={`find-severity-${f.id}`} className={`w-full p-2.5 border ${sev.border} rounded-lg text-sm ${sev.bg} ${sev.text} font-bold outline-none cursor-pointer`}
               value={f.severity} onChange={e => { const val = e.target.value as Severity; onSync({ severity: val }); onAction(() => onSave(f.id!, { severity: val })); }}>
               <option value="Baja">Baja</option>
@@ -170,7 +170,7 @@ const FindingCard: React.FC<{
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={`find-priority-${f.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest flex items-center gap-1.5">Prioridad <Tooltip text="Urgencia recomendada para resolver el hallazgo."><Info size={12} className="text-slate-400" /></Tooltip></label>
+            <label htmlFor={`find-priority-${f.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest flex items-center gap-1.5">Prioridad <Tooltip text="Urgencia recomendada para resolver el hallazgo."><Info size={12} className="text-slate-400" /></Tooltip></label>
             <select id={`find-priority-${f.id}`} className={`w-full p-2.5 border ${pri.border} rounded-lg text-sm ${pri.bg} ${pri.text} font-bold outline-none cursor-pointer`}
               value={f.priority} onChange={e => { const val = e.target.value as Priority; onSync({ priority: val }); onAction(() => onSave(f.id!, { priority: val })); }}>
               <option value="Baja">Baja</option>
@@ -179,7 +179,7 @@ const FindingCard: React.FC<{
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={`find-status-${f.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Estado</label>
+            <label htmlFor={`find-status-${f.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Estado</label>
             <select id={`find-status-${f.id}`} className={`w-full p-2.5 border ${sta.border} rounded-lg text-sm ${sta.bg} ${sta.text} font-bold outline-none cursor-pointer`}
               value={f.status} onChange={e => { const val = e.target.value as TaskStatus; onSync({ status: val }); onAction(() => onSave(f.id!, { status: val })); }}>
               <option value="Pendiente">⏳ Pendiente</option>
@@ -234,17 +234,17 @@ const FindingRow: React.FC<{
 
   return (
     <tr className="hover:bg-slate-50/50 transition-colors">
-    <td className="p-3 text-center"><span className="id-badge">{idx + 1}</span></td>
-        <td className="p-3 text-center">
-          <button
-            type="button"
-            onClick={() => { handleLocalChange(f.id!, { is_favorite: !f.is_favorite }); handleActionWithStatus(() => onSave(f.id!, { is_favorite: !f.is_favorite })); }}
-            className={`p-1.5 rounded-lg border-none bg-transparent cursor-pointer transition-all ${f.is_favorite ? 'text-amber-400' : 'text-slate-300 hover:text-amber-300'}`}
-            aria-label={f.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorito'}
-          >
-            <Star size={18} fill={f.is_favorite ? 'currentColor' : 'none'} strokeWidth={2} aria-hidden="true" />
-          </button>
-        </td>      
+      <td className="p-3 text-center"><span className="id-badge">{idx + 1}</span></td>
+      <td className="p-3 text-center">
+        <button
+          type="button"
+          onClick={() => { handleLocalChange(f.id!, { is_favorite: !f.is_favorite }); handleActionWithStatus(() => onSave(f.id!, { is_favorite: !f.is_favorite })); }}
+          className={`p-1.5 rounded-lg border-none bg-transparent cursor-pointer transition-all ${f.is_favorite ? 'text-amber-400' : 'text-slate-300 hover:text-amber-300'}`}
+          aria-label={f.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorito'}
+        >
+          <Star size={18} fill={f.is_favorite ? 'currentColor' : 'none'} strokeWidth={2} aria-hidden="true" />
+        </button>
+      </td>
       <td className="p-2">
         <AutoGrowTextarea aria-label="Problema detectado"
           className={fieldClass(warnProblem, "w-full p-2 border border-transparent bg-transparent rounded-lg text-sm transition-all focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none font-bold", 'error')}
@@ -348,7 +348,7 @@ export const FindingsView: React.FC<FindingsViewProps> = ({
     <main className="animate-in fade-in duration-500">
       <header className="flex items-center justify-between bg-navy text-white p-4 md:px-6 rounded-xl mb-8 shadow-md min-h-[70px] gap-4">
         <div className="flex-1" />
-        <h1 className="text-xl md:text-2xl font-bold m-0 text-center flex-1">Síntesis de hallazgos y plan de mejora</h1>
+        <h1 className="text-xl md:text-2xl font-bold m-0 text-center flex-1 text-white">Síntesis de hallazgos y plan de mejora</h1>
         <div role="status" aria-live="polite" className="flex-1 flex justify-end flex items-center gap-2 text-sm font-bold opacity-90">
           {isSaving
             ? <span className="flex items-center gap-1.5 text-white animate-pulse"><RefreshCcw size={14} className="animate-spin" aria-hidden="true" /> Guardando…</span>

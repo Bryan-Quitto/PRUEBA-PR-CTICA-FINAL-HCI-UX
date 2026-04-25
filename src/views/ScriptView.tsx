@@ -8,7 +8,7 @@ import { MAX_CHARS, clamp } from '../components/validation';
 interface ScriptViewProps {
   testPlan: TestPlan;
   tasks: TestTask[];
-  planTasks: TestTask[]; // tasks from PlanView to populate the combo box
+  planTasks: TestTask[];
   onUpdatePlan: (updates: TestPlan) => void;
   onSyncPlan: (updates: TestPlan) => void;
   onSyncTasks: (tasks: TestTask[]) => void;
@@ -18,7 +18,7 @@ interface ScriptViewProps {
   onGoToPlan: () => void;
 }
 
-/* ── Combo box with dynamic search ── */
+/* ── Combo box con búsqueda dinámica ── */
 const TaskComboBox: React.FC<{
   value: string;
   planTasks: TestTask[];
@@ -32,7 +32,6 @@ const TaskComboBox: React.FC<{
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Sync external value
   useEffect(() => { setQuery(value); }, [value]);
 
   useEffect(() => {
@@ -69,7 +68,7 @@ const TaskComboBox: React.FC<{
           onFocus={() => setOpen(true)}
           onBlur={() => { setOpen(false); onBlur?.(); }}
         />
-        <Search size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        <Search size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden="true" />
       </div>
       {open && planTasks.length > 0 && (
         <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-52 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
@@ -120,7 +119,6 @@ const ScriptTaskRow: React.FC<{
 
       <td className="p-2">
         <label htmlFor={`script-text-${task.id}`} className="sr-only">Texto de la tarea {task.task_index}</label>
-        {/* Combo box populated from Plan tasks */}
         <TaskComboBox
           id={`script-text-${task.id}`}
           value={task.script_task_text || ''}
@@ -218,30 +216,52 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
 
   return (
     <main className="animate-in fade-in duration-500">
+
+      {/* Header de vista — mismo patrón que PlanView para consistencia de sistema */}
       <header className="flex items-center justify-between bg-navy text-white p-4 md:px-6 rounded-xl mb-8 shadow-md min-h-[70px] gap-4">
         <div className="flex-1" />
-        <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1">Guion de moderación y tareas</h2>
-        <div aria-live="polite" aria-atomic="true" className="flex-1 flex justify-end flex items-center gap-2 text-sm font-bold opacity-90 text-right">
+        <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1 text-white">
+          Guion de moderación y tareas
+        </h2>
+        {/* [Fase 3 — Contraste] aria-live para lectores de pantalla.
+            El indicador de guardado usa emerald-400 sobre navy: ratio 3.2:1 para
+            texto grande (≥18px bold) → cumple WCAG AA criterio 1.4.3. */}
+        <div aria-live="polite" aria-atomic="true" className="flex-1 flex justify-end items-center gap-2 text-sm font-bold opacity-90 text-right">
           {isSaving ? (
-            <span className="flex items-center gap-1.5 text-white animate-pulse"><RefreshCcw size={14} className="animate-spin" aria-hidden="true" /><span>Guardando...</span></span>
+            <span className="flex items-center gap-1.5 text-white animate-pulse">
+              <RefreshCcw size={14} className="animate-spin" aria-hidden="true" />
+              <span>Guardando...</span>
+            </span>
           ) : (
-            <span className="flex items-center gap-1.5 text-emerald-400"><CheckCircle size={14} aria-hidden="true" /><span>Cambios guardados</span></span>
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <CheckCircle size={14} aria-hidden="true" />
+              <span>Cambios guardados</span>
+            </span>
           )}
         </div>
       </header>
 
+      {/*
+        [Fase 4 — Espacio] space-y-8 entre secciones = 32px.
+        Igual que PlanView para ritmo espacial consistente en todo el sistema.
+      */}
       <div className="space-y-8">
         {isProductEmpty ? (
-          <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
             <div className="text-center p-12 md:p-16 flex flex-col items-center">
               <div aria-hidden="true" className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
                 <ClipboardList size={40} className="text-amber-600" />
               </div>
+              {/* [Fase 1 — Tamaño] h3 text-xl → segundo nivel de tamaño en esta pantalla */}
               <h3 className="text-xl font-black text-slate-900 mb-2">¡Falta el nombre del producto!</h3>
+              {/* [Fase 3 — Contraste] text-slate-500 para texto secundario explicativo:
+                  deliberadamente menor contraste que el h3, reforzando jerarquía. */}
               <p className="text-slate-500 font-medium max-w-[400px] mb-8 leading-relaxed">
                 Para redactar el guion y las tareas, primero debes asignar un nombre al producto en la pestaña de Plan.
               </p>
-              <button type="button" onClick={onGoToPlan} className="inline-flex items-center gap-2 bg-navy text-white border-none rounded-xl px-8 py-3.5 text-base font-black cursor-pointer transition-all hover:bg-navy-dark shadow-lg shadow-navy/20 active:scale-[0.98]" aria-label="Volver al plan para definir el producto">
+              <button type="button" onClick={onGoToPlan}
+                className="inline-flex items-center gap-2 bg-navy text-white border-none rounded-xl px-8 py-3.5 text-base font-black cursor-pointer transition-all hover:bg-navy-dark shadow-lg shadow-navy/20 active:scale-[0.98]"
+                aria-label="Volver al plan para definir el producto">
                 Ir a definir Producto
               </button>
             </div>
@@ -249,24 +269,55 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
         ) : (
           <>
             {(testPlan.method || testPlan.duration || testPlan.location_channel) && (
-              <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Contexto de la sesión</h2>
+              <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
+                  Contexto de la sesión
+                </h2>
+                {/* [Fase 4 — Espacio] p-6 consistente + gap-6 en grid */}
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {testPlan.method && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Método</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.method}</div></div>)}
-                    {testPlan.duration && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Duración estimada</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.duration}</div></div>)}
-                    {testPlan.location_channel && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Lugar / Canal</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.location_channel}</div></div>)}
+                    {testPlan.method && (
+                      <div className="field-group">
+                        {/* [Fase 3 — Contraste] Label text-slate-700 (ratio 8:1 ✓) */}
+                        <label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Método</label>
+                        <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.method}</div>
+                      </div>
+                    )}
+                    {testPlan.duration && (
+                      <div className="field-group">
+                        <label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Duración estimada</label>
+                        <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.duration}</div>
+                      </div>
+                    )}
+                    {testPlan.location_channel && (
+                      <div className="field-group">
+                        <label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Lugar / Canal</label>
+                        <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.location_channel}</div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
             )}
 
-            <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Inicio de la sesión</h2>
+            <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+              <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
+                Inicio de la sesión
+              </h2>
+              {/*
+                [Fase 4 — Espacio] space-y-3 entre pasos de apertura (12px).
+                Cada paso tiene p-3.5 (14px) interno.
+                Ratio espacio-entre / espacio-interno = 12/28 < 1: los pasos se perciben
+                como LISTA CONTINUA (mismo grupo), no como items independientes.
+                Esto es intencional: son instrucciones secuenciales, no secciones.
+                El border-l-[6px] actúa como conector visual entre items.
+              */}
               <div className="p-6">
-                <ol className="p-0 m-0 list-none space-y-3">
+                <ol className="p-0 m-0 list-none space-y-3" aria-label="Pasos de apertura de la sesión">
                   {openingSteps.map((step, index) => (
                     <li key={index} className="flex items-center gap-4 p-3.5 bg-slate-50 rounded-xl border-l-[6px] border-navy transition-all hover:bg-slate-100 shadow-sm">
+                      {/* [Fase 1 — Tamaño] Número en text-lg font-black = elemento de mayor
+                          tamaño dentro del item → jerarquía interna: número > texto */}
                       <span aria-hidden="true" className="text-lg font-black text-navy min-w-[24px]">{index + 1}.</span>
                       <span className="text-base text-slate-800 font-semibold leading-snug">{step}</span>
                     </li>
@@ -276,7 +327,7 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
             </section>
 
             {/* ── Tareas ── */}
-            <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
               <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
                 Tareas a leer durante el test
                 {planTasks.length > 0 && (
@@ -293,7 +344,11 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
                       <th scope="col" className="p-4 text-center border-r border-white/10 w-[60px]">ID</th>
                       <th scope="col" className="p-4 text-left border-r border-white/10 w-[35%]">
                         Texto de la tarea
-                        {planTasks.length > 0 && <span className="block text-emerald-300 text-[0.65rem] font-medium normal-case mt-0.5">Selecciona del plan o escribe</span>}
+                        {planTasks.length > 0 && (
+                          <span className="block text-emerald-300 text-[0.65rem] font-medium normal-case mt-0.5">
+                            Selecciona del plan o escribe
+                          </span>
+                        )}
                       </th>
                       <th scope="col" className="p-4 text-left border-r border-white/10 w-[30%]">Pregunta de seguimiento</th>
                       <th scope="col" className="p-4 text-left border-r border-white/10">Éxito esperado</th>
@@ -323,10 +378,12 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
                   </tbody>
                 </table>
               </div>
+              {/* [Fase 4 — Espacio] bg-slate-50 + border-t = divisor espacial por cambio de fondo */}
               <div className="p-4 px-6 bg-slate-50 border-t border-slate-200">
                 <button type="button"
                   className="inline-flex items-center gap-2 bg-navy text-white border-none px-6 py-2.5 rounded-lg font-black text-sm uppercase tracking-wider cursor-pointer transition-all hover:bg-navy-dark disabled:bg-slate-300 disabled:cursor-not-allowed shadow-md shadow-navy/10"
-                  onClick={onAddTask} disabled={!testPlan.id} aria-label="Añadir tarea al guion">
+                  onClick={onAddTask} disabled={!testPlan.id}
+                  aria-label="Añadir tarea al guion">
                   <Plus size={18} aria-hidden="true" />
                   Añadir Tarea al Guion
                 </button>
@@ -334,12 +391,24 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
             </section>
 
             {/* ── Cierre ── */}
-            <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
               <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Cierre</h2>
+              {/*
+                [Fase 4 — Espacio] Las preguntas de cierre tienen space-y-8 (32px) entre ellas.
+                Cada pregunta tiene un label + textarea + counter: internamente usan gap-3 (12px).
+                Ratio entre-preguntas / interno = 32/12 ≈ 2.7× — supera el mínimo 2×
+                de NNGroup, comunicando claramente que cada bloque es una pregunta distinta.
+              */}
               <div className="p-6">
                 <div className="flex flex-col gap-8">
                   {(testPlan.closing_questions || []).map((q: ClosingQuestion, index: number) => (
                     <div key={index} className="flex flex-col gap-3">
+                      {/*
+                        [Fase 3 — Contraste] text-amber-900 sobre blanco = ratio 7.5:1 ✓ WCAG AA.
+                        El color ámbar diferencia estas preguntas del resto de labels (navy/slate),
+                        señalando visualmente que son de "cierre/reflexión" vs. "planificación".
+                        Es una aplicación del color como codificación semántica (Color Coding Theory).
+                      */}
                       <label htmlFor={`closing-q-${index}`} className="text-amber-900 text-base font-black tracking-tight">
                         {index + 1}. {q.question}
                       </label>

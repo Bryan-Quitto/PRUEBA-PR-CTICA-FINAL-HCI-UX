@@ -13,6 +13,10 @@ interface FieldWarningProps {
  * Aviso de validación debajo de un campo.
  * - variant='error'   → rojo  (campo obligatorio vacío o dato inválido)
  * - variant='warning' → amarillo (campo recomendado vacío)
+ *
+ * [Fase 3 — Contraste] El fondo tenue del mensaje crea contraste figura-fondo
+ * explícito, reforzando la jerarquía visual: el mensaje de error "emerge" sobre
+ * el campo. Ratio texto: #b91c1c sobre #fef2f2 = ~5.2:1 (WCAG AA ✓).
  */
 export const FieldWarning: React.FC<FieldWarningProps> = ({ message, show, variant = 'warning' }) => {
   if (!show) return null;
@@ -23,8 +27,10 @@ export const FieldWarning: React.FC<FieldWarningProps> = ({ message, show, varia
     <div
       role="alert"
       aria-live="polite"
-      className={`flex items-center gap-1.5 mt-1 text-[0.75rem] font-semibold animate-in fade-in slide-in-from-top-1 duration-200 ${
-        isError ? 'text-red-700' : 'text-amber-700'
+      className={`flex items-center gap-1.5 mt-1 px-2 py-1 rounded-md text-[0.75rem] font-semibold animate-in fade-in slide-in-from-top-1 duration-200 ${
+        isError
+          ? 'text-red-700 bg-red-50 border border-red-200'
+          : 'text-amber-700 bg-amber-50 border border-amber-200'
       }`}
     >
       {isError
@@ -38,6 +44,9 @@ export const FieldWarning: React.FC<FieldWarningProps> = ({ message, show, varia
 
 /**
  * Contador de caracteres que se vuelve rojo cuando supera el límite.
+ * [Fase 3 — Contraste] text-slate-400 (#94a3b8) es el mínimo para texto decorativo;
+ * al acercarse al límite sube a amber (#d97706) y al superarlo a red (#dc2626),
+ * creando una escala de urgencia perceptible sin leer el número.
  */
 export const CharCounter: React.FC<{ value: string | undefined }> = ({ value }) => {
   const len = value?.length ?? 0;
@@ -54,6 +63,10 @@ export const CharCounter: React.FC<{ value: string | undefined }> = ({ value }) 
  * Devuelve las clases CSS del input según el tipo de aviso.
  * variant='error'   → borde rojo + fondo rojo tenue
  * variant='warning' → borde amarillo + fondo amarillo tenue
+ *
+ * [Fase 3 — Contraste] El borde coloreado + fondo tenue actúan como
+ * señal pre-atentiva: el ojo detecta el cambio de color antes de leer
+ * el texto del error (principio de pre-atención visual, Ware 2004).
  */
 export function fieldClass(
   hasWarning: boolean,

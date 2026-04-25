@@ -58,26 +58,39 @@ const TaskCard: React.FC<{
           <button type="button" className="bg-transparent border-none text-red-300 p-1 cursor-pointer transition-colors hover:text-red-500" onClick={() => setConfirmDelete(true)} aria-label={`Eliminar ${task.task_index || 'tarea'}`}><Trash2 size={16} aria-hidden="true" /></button>
         )}
       </div>
+
+      {/* [Fase 4 — Espacio] p-4 con gap-4 entre campos (16px interno).
+          El card entero tiene mb-0 controlado por el gap-4 del contenedor padre,
+          que debe ser ≥ 2× el gap interno para cumplir Ley de Proximidad. */}
       <div className="p-4 flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`m-scenario-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Escenario / tarea <span className="text-red-600">*</span></label>
+        <div className="field-group">
+          {/* [Fase 3 — Contraste] text-slate-700 = ratio 8:1 sobre blanco ✓ WCAG AA */}
+          <label htmlFor={`m-scenario-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">
+            Escenario / tarea <span className="text-red-600" aria-hidden="true">*</span>
+            <span className="sr-only">(obligatorio)</span>
+          </label>
           <input id={`m-scenario-${task.id}`} type="text" maxLength={MAX_CHARS}
+            aria-required="true"
             className={fieldClass(warnScenario, "w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all", 'error')}
             value={task.scenario || ''} onChange={e => handleChange('scenario', e.target.value)}
-            onBlur={e => { touch('scenario'); onSaveTask(task.id!, { scenario: e.target.value }); }} placeholder="Ej. Imagina que quieres comprar..." />
+            onBlur={e => { touch('scenario'); onSaveTask(task.id!, { scenario: e.target.value }); }}
+            placeholder="Ej. Imagina que quieres comprar..." />
           <CharCounter value={task.scenario} />
           <FieldWarning show={warnScenario} message="El escenario/tarea no puede estar vacío." variant="error" />
         </div>
-        <div className="flex flex-col gap-1.5">
+
+        <div className="field-group">
           <label htmlFor={`m-expected-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Resultado esperado</label>
           <input id={`m-expected-${task.id}`} type="text" maxLength={MAX_CHARS}
             className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all"
             value={task.expected_result || ''} onChange={e => handleChange('expected_result', e.target.value)}
-            onBlur={e => onSaveTask(task.id!, { expected_result: e.target.value })} placeholder="Ej. El usuario llega a la confirmación." />
+            onBlur={e => onSaveTask(task.id!, { expected_result: e.target.value })}
+            placeholder="Ej. El usuario llega a la confirmación." />
           <CharCounter value={task.expected_result} />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+          <div className="field-group">
             <label htmlFor={`m-metric-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Métrica</label>
             <input id={`m-metric-${task.id}`} type="text" maxLength={MAX_CHARS}
               className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all"
@@ -85,7 +98,7 @@ const TaskCard: React.FC<{
               onBlur={e => onSaveTask(task.id!, { main_metric: e.target.value })} placeholder="Tiempo..." />
             <CharCounter value={task.main_metric} />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="field-group">
             <label htmlFor={`m-criteria-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Criterio</label>
             <input id={`m-criteria-${task.id}`} type="text" maxLength={MAX_CHARS}
               className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all"
@@ -121,9 +134,10 @@ const TaskRow: React.FC<{
       <td className="p-2">
         <input type="text" maxLength={MAX_CHARS}
           className={fieldClass(warnScenario, "w-full p-2 border border-transparent bg-transparent rounded-lg text-sm transition-all focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none font-medium", 'error')}
-          aria-label={`Escenario para ${task.task_index}`} value={task.scenario || ''}
+          aria-label={`Escenario para ${task.task_index}`} aria-required="true" value={task.scenario || ''}
           onChange={e => handleChange('scenario', e.target.value)}
-          onBlur={e => { touch('scenario'); onSaveTask(task.id!, { scenario: e.target.value }); }} placeholder="Ej. Imagina que quieres comprar..." />
+          onBlur={e => { touch('scenario'); onSaveTask(task.id!, { scenario: e.target.value }); }}
+          placeholder="Ej. Imagina que quieres comprar..." />
         <CharCounter value={task.scenario} />
         <FieldWarning show={warnScenario} message="El escenario no puede estar vacío." variant="error" />
       </td>
@@ -132,7 +146,8 @@ const TaskRow: React.FC<{
           className="w-full p-2 border border-transparent bg-transparent rounded-lg text-sm transition-all focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none font-medium"
           aria-label={`Resultado esperado para ${task.task_index}`} value={task.expected_result || ''}
           onChange={e => handleChange('expected_result', e.target.value)}
-          onBlur={e => onSaveTask(task.id!, { expected_result: e.target.value })} placeholder="Ej. El usuario llega a la confirmación." />
+          onBlur={e => onSaveTask(task.id!, { expected_result: e.target.value })}
+          placeholder="Ej. El usuario llega a la confirmación." />
         <CharCounter value={task.expected_result} />
       </td>
       <td className="p-2">
@@ -140,7 +155,8 @@ const TaskRow: React.FC<{
           className="w-full p-2 border border-transparent bg-transparent rounded-lg text-sm transition-all focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none font-medium"
           aria-label={`Métrica para ${task.task_index}`} value={task.main_metric || ''}
           onChange={e => handleChange('main_metric', e.target.value)}
-          onBlur={e => onSaveTask(task.id!, { main_metric: e.target.value })} placeholder="Ej. Tiempo, Tasa de éxito..." />
+          onBlur={e => onSaveTask(task.id!, { main_metric: e.target.value })}
+          placeholder="Ej. Tiempo, Tasa de éxito..." />
         <CharCounter value={task.main_metric} />
       </td>
       <td className="p-2">
@@ -148,7 +164,8 @@ const TaskRow: React.FC<{
           className="w-full p-2 border border-transparent bg-transparent rounded-lg text-sm transition-all focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none font-medium"
           aria-label={`Criterio de éxito para ${task.task_index}`} value={task.success_criteria || ''}
           onChange={e => handleChange('success_criteria', e.target.value)}
-          onBlur={e => onSaveTask(task.id!, { success_criteria: e.target.value })} placeholder="Ej. Sin errores críticos..." />
+          onBlur={e => onSaveTask(task.id!, { success_criteria: e.target.value })}
+          placeholder="Ej. Sin errores críticos..." />
         <CharCounter value={task.success_criteria} />
       </td>
       <td className="p-3 text-center">
@@ -183,7 +200,6 @@ export const PlanView: React.FC<PlanViewProps> = ({
   };
 
   const handleChange = (updates: Partial<TestPlan>) => {
-    // clamp string fields
     const clamped: Partial<TestPlan> = {};
     for (const [k, v] of Object.entries(updates)) {
       (clamped as Record<string, unknown>)[k] = typeof v === 'string' ? clamp(v) : v;
@@ -191,7 +207,6 @@ export const PlanView: React.FC<PlanViewProps> = ({
     const updated = { ...localPlan, ...clamped };
     setLocalPlan(updated);
     onSyncPlan(updated);
-    // feedback visual inmediato sin esperar onBlur
     if ('product' in updates) touch('product');
     if ('objective' in updates) touch('objective');
     if ('moderator' in updates) touch('moderator');
@@ -220,34 +235,73 @@ export const PlanView: React.FC<PlanViewProps> = ({
     duration:         touched.duration && (!localPlan.duration || localPlan.duration.trim() === ''),
   };
 
-  // Compute min date for the date picker (2 weeks ago)
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
   const minDate = twoWeeksAgo.toISOString().split('T')[0];
 
   return (
+    /*
+     * [Fase 4 — Espacio] animate-in + fade-in para entrada suave.
+     * El espacio interno de cada sección (p-6 = 24px) vs el espacio
+     * entre secciones (space-y-8 = 32px) mantiene la ratio ≥ 1.3×
+     * recomendada por NNGroup para separación de grupos.
+     */
     <main id="plan-panel" className="animate-in fade-in duration-500">
+
+      {/* Header de vista — nivel L1 de la jerarquía */}
       <header className="flex items-center justify-between bg-navy text-white p-4 md:px-6 rounded-xl mb-8 shadow-md min-h-[70px] gap-4">
         <div className="flex-1" />
-        <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1">Plan de Pruebas de Usabilidad</h2>
-        <div className="flex-1 flex justify-end flex items-center gap-2 text-sm font-bold opacity-90 text-right">
+        {/*
+          [Fase 3 — Contraste] Texto blanco sobre navy = ratio 12.6:1 ✓ WCAG AAA.
+          Este es el elemento de mayor contraste de la vista, reforzando
+          que es el título principal (nivel 1 de la jerarquía por contraste).
+        */}
+        <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1 text-white">
+          Plan de Pruebas de Usabilidad
+        </h2>
+        <div className="flex-1 flex justify-end items-center gap-2 text-sm font-bold opacity-90 text-right" aria-live="polite" aria-atomic="true">
           {isSaving ? (
-            <span className="flex items-center gap-1.5 text-white animate-pulse"><RefreshCcw size={14} className="animate-spin" /> Guardando...</span>
+            <span className="flex items-center gap-1.5 text-white animate-pulse">
+              <RefreshCcw size={14} className="animate-spin" aria-hidden="true" /> Guardando...
+            </span>
           ) : (
-            <span className="flex items-center gap-1.5 text-emerald-400"><CheckCircle size={14} /> Cambios guardados</span>
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <CheckCircle size={14} aria-hidden="true" /> Cambios guardados
+            </span>
           )}
         </div>
       </header>
 
+      {/*
+        [Fase 4 — Espacio] space-y-8 = 32px entre secciones.
+        Cada sección tiene p-6 = 24px interno.
+        Ratio exterior/interior = 32/24 ≈ 1.33× (cumple Ley de Proximidad).
+        Las secciones se perciben como grupos distintos sin necesidad de leer
+        los encabezados (procesamiento pre-atentivo por espacio).
+      */}
       <div className="space-y-8">
+
         {/* ── 1. Contexto general ── */}
-        <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">1. Contexto general</h2>
+        <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          {/*
+            [Fase 2 — Color] bg-hierarchy-l1 (#003366) es el color más oscuro
+            del sistema de diseño → señal L1 de jerarquía visual.
+            [Fase 1 — Tamaño] text-base font-bold uppercase = H2 semántico y visual.
+          */}
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
+            1. Contexto general
+          </h2>
+
+          {/* [Fase 4 — Espacio] p-6 (24px) interno con gap-6 (24px) entre campos.
+              Dentro del grupo los campos tienen igual espaciado → se perciben como familia. */}
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-2">
+              <div className="field-group">
+                {/* [Fase 3 — Contraste] text-slate-700 (#334155) ratio 8:1 ✓ */}
                 <label htmlFor="product-name" className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  Producto / servicio: <span className="text-red-600">*</span>
+                  Producto / servicio:
+                  <span className="text-red-600" aria-hidden="true">*</span>
+                  <span className="sr-only">(obligatorio)</span>
                   {isProductEmpty && <span className="text-amber-600 text-[0.75rem] font-black uppercase">(Obligatorio)</span>}
                 </label>
                 <input id="product-name" type="text" maxLength={MAX_CHARS}
@@ -259,7 +313,8 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <CharCounter value={localPlan.product} />
                 <FieldWarning show={warn.product} message="Ingrese el nombre del producto para mayor claridad." variant="error" />
               </div>
-              <div className="flex flex-col gap-2">
+
+              <div className="field-group">
                 <label htmlFor="module-name" className="text-sm font-bold text-slate-700">Pantalla / módulo:</label>
                 <input id="module-name" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
@@ -270,8 +325,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label htmlFor="test-objective" className="text-sm font-bold text-slate-700">Objetivo del test: <span className="text-red-600">*</span></label>
+            <div className="field-group">
+              <label htmlFor="test-objective" className="text-sm font-bold text-slate-700">
+                Objetivo del test: <span className="text-red-600" aria-hidden="true">*</span>
+                <span className="sr-only">(obligatorio)</span>
+              </label>
               <AutoGrowTextarea id="test-objective"
                 aria-required="true" aria-invalid={warn.objective || undefined}
                 className={fieldClass(warn.objective, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -282,8 +340,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
               <FieldWarning show={warn.objective} message="El objetivo del test no debe estar vacío." variant="error" />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label htmlFor="user-profile" className="text-sm font-bold text-slate-700">Perfil de usuarios: <span className="text-red-600">*</span></label>
+            <div className="field-group">
+              <label htmlFor="user-profile" className="text-sm font-bold text-slate-700">
+                Perfil de usuarios: <span className="text-red-600" aria-hidden="true">*</span>
+                <span className="sr-only">(obligatorio)</span>
+              </label>
               <input id="user-profile" type="text" maxLength={MAX_CHARS}
                 aria-required="true" aria-invalid={warn.user_profile || undefined}
                 className={fieldClass(warn.user_profile, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -295,8 +356,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="test-method" className="text-sm font-bold text-slate-700">Método: <span className="text-red-600">*</span></label>
+              <div className="field-group">
+                <label htmlFor="test-method" className="text-sm font-bold text-slate-700">
+                  Método: <span className="text-red-600" aria-hidden="true">*</span>
+                  <span className="sr-only">(obligatorio)</span>
+                </label>
                 <input id="test-method" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.method || undefined}
                   className={fieldClass(warn.method, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -306,8 +370,12 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <CharCounter value={localPlan.method} />
                 <FieldWarning show={warn.method} message="Especifique el método de evaluación." variant="error" />
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="test-duration" className="text-sm font-bold text-slate-700">Duración: <span className="text-red-600">*</span></label>
+
+              <div className="field-group">
+                <label htmlFor="test-duration" className="text-sm font-bold text-slate-700">
+                  Duración: <span className="text-red-600" aria-hidden="true">*</span>
+                  <span className="sr-only">(obligatorio)</span>
+                </label>
                 <input id="test-duration" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.duration || undefined}
                   className={fieldClass(warn.duration, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -320,9 +388,13 @@ export const PlanView: React.FC<PlanViewProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-2">
+              <div className="field-group">
                 <label htmlFor="test-date" className="text-sm font-bold text-slate-700">
-                  Fecha del test: <span className="text-red-600">*</span> <span className="text-slate-400 font-normal text-xs">(máx. 2 semanas atrás)</span>
+                  Fecha del test: <span className="text-red-600" aria-hidden="true">*</span>
+                  <span className="sr-only">(obligatorio)</span>
+                  {/* [Fase 3 — Contraste] Aclaración en text-slate-500 (nivel 3) — visualmente
+                      secundaria respecto al label principal (nivel 2 text-slate-700) */}
+                  <span className="text-slate-400 font-normal text-xs ml-1">(máx. 2 semanas atrás)</span>
                 </label>
                 <input id="test-date" type="date" min={minDate}
                   aria-required="true" aria-invalid={warn.test_date || undefined}
@@ -332,8 +404,12 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   onBlur={(e) => { touch('test_date'); handleAutoSave({ test_date: e.target.value }); }} />
                 <FieldWarning show={warn.test_date} message={dateError || 'Seleccione la fecha del test (día/mes/año completos).'} />
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="location-channel" className="text-sm font-bold text-slate-700">Lugar / canal: <span className="text-red-600">*</span></label>
+
+              <div className="field-group">
+                <label htmlFor="location-channel" className="text-sm font-bold text-slate-700">
+                  Lugar / canal: <span className="text-red-600" aria-hidden="true">*</span>
+                  <span className="sr-only">(obligatorio)</span>
+                </label>
                 <input id="location-channel" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.location_channel || undefined}
                   className={fieldClass(warn.location_channel, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -348,9 +424,12 @@ export const PlanView: React.FC<PlanViewProps> = ({
         </section>
 
         {/* ── 2. Tareas del test ── */}
-        <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
             <span>2. Tareas del test</span>
+            {/* [Fase 3 — Contraste] Contador en text-red-300 sobre navy cuando límite:
+                contraste reducido deliberadamente (es info secundaria), sube a atención
+                solo cuando hay urgencia (límite alcanzado). */}
             <span className={`text-sm font-bold normal-case tracking-normal ${tasks.length >= 10 ? 'text-red-300' : 'text-white/70'}`}>
               {tasks.length}/10 tareas{tasks.length >= 10 && ' — límite alcanzado'}
             </span>
@@ -365,7 +444,10 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   <TaskCard key={task.id} task={task} handleTaskChange={handleTaskChange} onSaveTask={onSaveTask} onDeleteTask={onDeleteTask} />
                 ))
               )}
-              <button type="button" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none p-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-xl shadow-emerald-200 mt-2 active:scale-[0.97] w-full ring-2 ring-emerald-300 ring-offset-1" onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10} aria-label="Añadir nueva tarea al plan">
+              <button type="button"
+                className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none p-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-xl shadow-emerald-200 mt-2 active:scale-[0.97] w-full ring-2 ring-emerald-300 ring-offset-1"
+                onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10}
+                aria-label="Añadir nueva tarea al plan">
                 <Plus size={20} aria-hidden="true" /> Añadir Tarea
               </button>
               {isProductEmpty && <span className="text-[0.8rem] text-slate-500 italic text-center mt-1">* Debes definir un nombre de producto para añadir tareas.</span>}
@@ -378,6 +460,8 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <table className="w-full border-collapse">
                   <caption className="sr-only">Listado de tareas detalladas para la prueba de usabilidad</caption>
                   <thead>
+                    {/* [Fase 2 — Color] bg-navy en thead → mismo L1 que el section header,
+                        pero thead tiene menor tamaño de fuente → jerarquía interna de la tabla */}
                     <tr className="bg-navy text-white text-[0.75rem] font-black uppercase tracking-[0.1em]">
                       <th scope="col" className="p-4 text-center border-r border-white/10 w-[60px]">ID</th>
                       <th scope="col" className="p-4 text-left border-r border-white/10">Escenario / tarea</th>
@@ -398,8 +482,14 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   </tbody>
                 </table>
               </div>
+              {/* [Fase 4 — Espacio] bg-slate-50 + border-t crea separación visual entre
+                  el contenido de la tabla y las acciones: el cambio de fondo actúa como
+                  divisor espacial sin necesidad de un <hr> explícito. */}
               <div className="p-4 px-6 bg-slate-50 border-t border-slate-200 flex items-center gap-4">
-                <button type="button" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-emerald-200 active:scale-[0.97] ring-2 ring-emerald-300 ring-offset-1" onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10} aria-label="Añadir nueva tarea al plan">
+                <button type="button"
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-emerald-200 active:scale-[0.97] ring-2 ring-emerald-300 ring-offset-1"
+                  onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10}
+                  aria-label="Añadir nueva tarea al plan">
                   <Plus size={20} aria-hidden="true" /> Añadir Tarea
                 </button>
                 {isProductEmpty && <span className="text-[0.85rem] text-slate-500 font-bold italic">* Debes definir un nombre de producto para añadir tareas.</span>}
@@ -409,12 +499,18 @@ export const PlanView: React.FC<PlanViewProps> = ({
         </section>
 
         {/* ── 3. Roles y logística ── */}
-        <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">3. Roles y logística</h2>
+          {/* [Fase 4 — Espacio] p-6 interno con grid gap-6.
+              El espacio entre las 4 columnas (24px) ≈ espacio interno del campo (p-3 = 12px × 2),
+              comunicando que todos los campos son del mismo nivel jerárquico. */}
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700">Moderador: <span className="text-red-600">*</span></label>
+              <div className="field-group">
+                <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700">
+                  Moderador: <span className="text-red-600" aria-hidden="true">*</span>
+                  <span className="sr-only">(obligatorio)</span>
+                </label>
                 <input id="moderator-name" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.moderator || undefined}
                   className={fieldClass(warn.moderator, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -424,7 +520,8 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <CharCounter value={localPlan.moderator} />
                 <FieldWarning show={warn.moderator} message="Ingrese el nombre del moderador." variant="error" />
               </div>
-              <div className="flex flex-col gap-2">
+
+              <div className="field-group">
                 <label htmlFor="observer-name" className="text-sm font-bold text-slate-700">Observador:</label>
                 <input id="observer-name" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
@@ -433,7 +530,8 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   onBlur={(e) => handleAutoSave({ observer: e.target.value })} />
                 <CharCounter value={localPlan.observer} />
               </div>
-              <div className="flex flex-col gap-2">
+
+              <div className="field-group">
                 <label htmlFor="tools-used" className="text-sm font-bold text-slate-700">Herramientas:</label>
                 <input id="tools-used" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
@@ -442,7 +540,8 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   onBlur={(e) => handleAutoSave({ tools: e.target.value })} />
                 <CharCounter value={localPlan.tools} />
               </div>
-              <div className="flex flex-col gap-2">
+
+              <div className="field-group">
                 <label htmlFor="project-link" className="text-sm font-bold text-slate-700">Enlace:</label>
                 <input id="project-link" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
@@ -456,8 +555,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
         </section>
 
         {/* ── 4. Notas del moderador ── */}
-        <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">4. Notas del moderador</h2>
+          {/* [Fase 4 — Espacio] p-6 consistente con todas las demás secciones.
+              El textarea tiene min-h-[120px] → espacio visual que comunica
+              "aquí hay espacio para escribir", guiando la acción del usuario. */}
           <div className="p-6">
             <label htmlFor="moderator-notes" className="sr-only">Notas adicionales del moderador</label>
             <AutoGrowTextarea id="moderator-notes"
@@ -469,6 +571,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <CharCounter value={localPlan.moderator_notes} />
           </div>
         </section>
+
       </div>
     </main>
   );

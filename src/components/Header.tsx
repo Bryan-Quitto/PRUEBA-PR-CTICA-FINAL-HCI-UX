@@ -22,7 +22,7 @@ const Header: React.FC = () => {
         {profile && (
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-[0.85rem] text-slate-500 font-semibold">{profile.full_name || profile.email}</span>
+              <span className="text-[0.85rem] text-slate-600 font-semibold">{profile.full_name || profile.email}</span>
             </div>
             <div className="flex items-center gap-3">
               <button 

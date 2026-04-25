@@ -253,9 +253,9 @@ export const ScriptView: React.FC<ScriptViewProps> = ({
                 <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">Contexto de la sesión</h2>
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {testPlan.method && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-500 uppercase tracking-widest">Método</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.method}</div></div>)}
-                    {testPlan.duration && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-500 uppercase tracking-widest">Duración estimada</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.duration}</div></div>)}
-                    {testPlan.location_channel && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-500 uppercase tracking-widest">Lugar / Canal</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.location_channel}</div></div>)}
+                    {testPlan.method && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Método</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.method}</div></div>)}
+                    {testPlan.duration && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Duración estimada</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.duration}</div></div>)}
+                    {testPlan.location_channel && (<div className="flex flex-col gap-2"><label className="text-[0.7rem] font-black text-slate-700 uppercase tracking-widest">Lugar / Canal</label><div className="p-3 bg-slate-50 rounded-lg border border-slate-200 font-semibold text-slate-800">{testPlan.location_channel}</div></div>)}
                   </div>
                 </div>
               </section>

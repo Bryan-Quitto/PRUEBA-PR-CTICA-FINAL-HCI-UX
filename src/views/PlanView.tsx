@@ -60,7 +60,7 @@ const TaskCard: React.FC<{
       </div>
       <div className="p-4 flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor={`m-scenario-${task.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Escenario / tarea *</label>
+          <label htmlFor={`m-scenario-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Escenario / tarea <span className="text-red-600">*</span></label>
           <input id={`m-scenario-${task.id}`} type="text" maxLength={MAX_CHARS}
             className={fieldClass(warnScenario, "w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all", 'error')}
             value={task.scenario || ''} onChange={e => handleChange('scenario', e.target.value)}
@@ -69,7 +69,7 @@ const TaskCard: React.FC<{
           <FieldWarning show={warnScenario} message="El escenario/tarea no puede estar vacío." variant="error" />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor={`m-expected-${task.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Resultado esperado</label>
+          <label htmlFor={`m-expected-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Resultado esperado</label>
           <input id={`m-expected-${task.id}`} type="text" maxLength={MAX_CHARS}
             className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all"
             value={task.expected_result || ''} onChange={e => handleChange('expected_result', e.target.value)}
@@ -78,7 +78,7 @@ const TaskCard: React.FC<{
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={`m-metric-${task.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Métrica</label>
+            <label htmlFor={`m-metric-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Métrica</label>
             <input id={`m-metric-${task.id}`} type="text" maxLength={MAX_CHARS}
               className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all"
               value={task.main_metric || ''} onChange={e => handleChange('main_metric', e.target.value)}
@@ -86,7 +86,7 @@ const TaskCard: React.FC<{
             <CharCounter value={task.main_metric} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={`m-criteria-${task.id}`} className="font-black text-[0.7rem] text-slate-500 uppercase tracking-widest">Criterio</label>
+            <label htmlFor={`m-criteria-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">Criterio</label>
             <input id={`m-criteria-${task.id}`} type="text" maxLength={MAX_CHARS}
               className="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all"
               value={task.success_criteria || ''} onChange={e => handleChange('success_criteria', e.target.value)}
@@ -247,7 +247,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
                 <label htmlFor="product-name" className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  Producto / servicio: *
+                  Producto / servicio: <span className="text-red-600">*</span>
                   {isProductEmpty && <span className="text-amber-600 text-[0.75rem] font-black uppercase">(Obligatorio)</span>}
                 </label>
                 <input id="product-name" type="text" maxLength={MAX_CHARS}
@@ -271,7 +271,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="test-objective" className="text-sm font-bold text-slate-700">Objetivo del test: *</label>
+              <label htmlFor="test-objective" className="text-sm font-bold text-slate-700">Objetivo del test: <span className="text-red-600">*</span></label>
               <AutoGrowTextarea id="test-objective"
                 aria-required="true" aria-invalid={warn.objective || undefined}
                 className={fieldClass(warn.objective, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -283,7 +283,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="user-profile" className="text-sm font-bold text-slate-700">Perfil de usuarios: *</label>
+              <label htmlFor="user-profile" className="text-sm font-bold text-slate-700">Perfil de usuarios: <span className="text-red-600">*</span></label>
               <input id="user-profile" type="text" maxLength={MAX_CHARS}
                 aria-required="true" aria-invalid={warn.user_profile || undefined}
                 className={fieldClass(warn.user_profile, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -296,7 +296,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
-                <label htmlFor="test-method" className="text-sm font-bold text-slate-700">Método: *</label>
+                <label htmlFor="test-method" className="text-sm font-bold text-slate-700">Método: <span className="text-red-600">*</span></label>
                 <input id="test-method" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.method || undefined}
                   className={fieldClass(warn.method, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -307,7 +307,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <FieldWarning show={warn.method} message="Especifique el método de evaluación." variant="error" />
               </div>
               <div className="flex flex-col gap-2">
-                <label htmlFor="test-duration" className="text-sm font-bold text-slate-700">Duración: *</label>
+                <label htmlFor="test-duration" className="text-sm font-bold text-slate-700">Duración: <span className="text-red-600">*</span></label>
                 <input id="test-duration" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.duration || undefined}
                   className={fieldClass(warn.duration, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -322,7 +322,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
                 <label htmlFor="test-date" className="text-sm font-bold text-slate-700">
-                  Fecha del test: * <span className="text-slate-400 font-normal text-xs">(máx. 2 semanas atrás)</span>
+                  Fecha del test: <span className="text-red-600">*</span> <span className="text-slate-400 font-normal text-xs">(máx. 2 semanas atrás)</span>
                 </label>
                 <input id="test-date" type="date" min={minDate}
                   aria-required="true" aria-invalid={warn.test_date || undefined}
@@ -333,7 +333,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 <FieldWarning show={warn.test_date} message={dateError || 'Seleccione la fecha del test (día/mes/año completos).'} />
               </div>
               <div className="flex flex-col gap-2">
-                <label htmlFor="location-channel" className="text-sm font-bold text-slate-700">Lugar / canal: *</label>
+                <label htmlFor="location-channel" className="text-sm font-bold text-slate-700">Lugar / canal: <span className="text-red-600">*</span></label>
                 <input id="location-channel" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.location_channel || undefined}
                   className={fieldClass(warn.location_channel, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
@@ -414,7 +414,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="flex flex-col gap-2">
-                <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700">Moderador: *</label>
+                <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700">Moderador: <span className="text-red-600">*</span></label>
                 <input id="moderator-name" type="text" maxLength={MAX_CHARS}
                   aria-required="true" aria-invalid={warn.moderator || undefined}
                   className={fieldClass(warn.moderator, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}

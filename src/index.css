@@ -13,6 +13,12 @@
   --color-hierarchy-l2: #1e40af;   /* Nivel 2 — sub-secciones y tabs activos     */
   --color-hierarchy-l3: #374151;   /* Nivel 3 — texto de campos y etiquetas      */
   --color-hierarchy-accent: #2563eb; /* Acento — CTAs primarios                 */
+
+  /* Contraste accesible — Principio: Contraste */
+  /* WCAG 2.1: ratio mínimo 4.5:1 para texto normal, 3:1 para texto grande */
+  --color-label-primary:   #1e293b;  /* Etiquetas importantes — ratio 14:1    */
+  --color-label-secondary: #475569;  /* Etiquetas secundarias — ratio 6.5:1   */
+  --color-placeholder:     #64748b;  /* Placeholder — mínimo 4.5:1            */
   
   --animate-gd-float: gd-float 9s ease-in-out infinite;
   --animate-gd-float-reverse: gd-float 13s ease-in-out infinite reverse;
@@ -52,6 +58,19 @@
 }
 
 @layer components {
+  /* --- Espaciado jerárquico — Principio: Espacio --- */
+  /* La Ley de Proximidad de Gestalt: mayor espacio = grupos distintos */
+  /* NNGroup: espacio entre grupos debe ser ≥2x espacio interno */
+  .section-block {
+    @apply mb-8 last:mb-0;
+  }
+  .section-gap-lg {
+    @apply mt-10 pt-6 border-t border-slate-100;
+  }
+  .field-group {
+    @apply flex flex-col gap-1.5 mb-4;
+  }
+
   /* --- Preserved Complex Components --- */
   
   /* Save Button with Unsaved State */

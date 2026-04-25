@@ -191,6 +191,10 @@ export const PlanView: React.FC<PlanViewProps> = ({
     const updated = { ...localPlan, ...clamped };
     setLocalPlan(updated);
     onSyncPlan(updated);
+    // feedback visual inmediato sin esperar onBlur
+    if ('product' in updates) touch('product');
+    if ('objective' in updates) touch('objective');
+    if ('moderator' in updates) touch('moderator');
   };
 
   const handleTaskChange = (id: string, updates: Partial<TestTask>) => {
@@ -247,6 +251,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   {isProductEmpty && <span className="text-amber-600 text-[0.75rem] font-black uppercase">(Obligatorio)</span>}
                 </label>
                 <input id="product-name" type="text" maxLength={MAX_CHARS}
+                  aria-required="true" aria-invalid={warn.product || undefined}
                   className={`w-full p-3 border rounded-lg text-base transition-all focus:outline-none focus:ring-4 focus:ring-navy/5 ${isProductEmpty && touched.product ? 'border-amber-400 bg-amber-50' : 'border-slate-200 bg-white focus:border-navy'}`}
                   value={localPlan.product} placeholder="Ej: App de Delivery 'Rápido', E-commerce, etc."
                   onChange={(e) => handleChange({ product: e.target.value })}
@@ -268,6 +273,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <div className="flex flex-col gap-2">
               <label htmlFor="test-objective" className="text-sm font-bold text-slate-700">Objetivo del test: *</label>
               <AutoGrowTextarea id="test-objective"
+                aria-required="true" aria-invalid={warn.objective || undefined}
                 className={fieldClass(warn.objective, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                 value={localPlan.objective} placeholder="Ej: Evaluar la facilidad de navegación y el tiempo de completado del flujo de compra."
                 onChange={(e) => handleChange({ objective: e.target.value })}
@@ -279,6 +285,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <div className="flex flex-col gap-2">
               <label htmlFor="user-profile" className="text-sm font-bold text-slate-700">Perfil de usuarios: *</label>
               <input id="user-profile" type="text" maxLength={MAX_CHARS}
+                aria-required="true" aria-invalid={warn.user_profile || undefined}
                 className={fieldClass(warn.user_profile, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                 value={localPlan.user_profile} placeholder="Ej: Usuarios de 25-40 años, con experiencia en compras online."
                 onChange={(e) => handleChange({ user_profile: e.target.value })}
@@ -291,6 +298,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
               <div className="flex flex-col gap-2">
                 <label htmlFor="test-method" className="text-sm font-bold text-slate-700">Método: *</label>
                 <input id="test-method" type="text" maxLength={MAX_CHARS}
+                  aria-required="true" aria-invalid={warn.method || undefined}
                   className={fieldClass(warn.method, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                   value={localPlan.method} placeholder="Ej: Moderado, remoto, presencial..."
                   onChange={(e) => handleChange({ method: e.target.value })}
@@ -301,6 +309,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
               <div className="flex flex-col gap-2">
                 <label htmlFor="test-duration" className="text-sm font-bold text-slate-700">Duración: *</label>
                 <input id="test-duration" type="text" maxLength={MAX_CHARS}
+                  aria-required="true" aria-invalid={warn.duration || undefined}
                   className={fieldClass(warn.duration, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                   value={localPlan.duration} placeholder="Ej: 45 min por sesión."
                   onChange={(e) => handleChange({ duration: e.target.value })}
@@ -316,6 +325,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   Fecha del test: * <span className="text-slate-400 font-normal text-xs">(máx. 2 semanas atrás)</span>
                 </label>
                 <input id="test-date" type="date" min={minDate}
+                  aria-required="true" aria-invalid={warn.test_date || undefined}
                   className={fieldClass(warn.test_date, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                   value={localPlan.test_date || ''}
                   onChange={(e) => handleChange({ test_date: e.target.value })}
@@ -325,6 +335,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
               <div className="flex flex-col gap-2">
                 <label htmlFor="location-channel" className="text-sm font-bold text-slate-700">Lugar / canal: *</label>
                 <input id="location-channel" type="text" maxLength={MAX_CHARS}
+                  aria-required="true" aria-invalid={warn.location_channel || undefined}
                   className={fieldClass(warn.location_channel, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                   value={localPlan.location_channel} placeholder="Ej: Google Meet, Oficina 302..."
                   onChange={(e) => handleChange({ location_channel: e.target.value })}
@@ -338,7 +349,12 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* ── 2. Tareas del test ── */}
         <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <h3 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">2. Tareas del test</h3>
+          <h3 className="bg-navy-light text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
+            <span>2. Tareas del test</span>
+            <span className={`text-sm font-bold normal-case tracking-normal ${tasks.length >= 10 ? 'text-red-300' : 'text-white/70'}`}>
+              {tasks.length}/10 tareas{tasks.length >= 10 && ' — límite alcanzado'}
+            </span>
+          </h3>
 
           {isMobile && (
             <div className="p-4 flex flex-col gap-4">
@@ -349,7 +365,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
                   <TaskCard key={task.id} task={task} handleTaskChange={handleTaskChange} onSaveTask={onSaveTask} onDeleteTask={onDeleteTask} />
                 ))
               )}
-              <button type="button" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none p-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-xl shadow-emerald-200 mt-2 active:scale-[0.97] w-full ring-2 ring-emerald-300 ring-offset-1" onClick={onAddTask} disabled={!localPlan.id || isProductEmpty} aria-label="Añadir nueva tarea al plan">
+              <button type="button" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none p-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-xl shadow-emerald-200 mt-2 active:scale-[0.97] w-full ring-2 ring-emerald-300 ring-offset-1" onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10} aria-label="Añadir nueva tarea al plan">
                 <Plus size={20} aria-hidden="true" /> Añadir Tarea
               </button>
               {isProductEmpty && <span className="text-[0.8rem] text-slate-500 italic text-center mt-1">* Debes definir un nombre de producto para añadir tareas.</span>}
@@ -383,7 +399,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
                 </table>
               </div>
               <div className="p-4 px-6 bg-slate-50 border-t border-slate-200 flex items-center gap-4">
-                <button type="button" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-emerald-200 active:scale-[0.97] ring-2 ring-emerald-300 ring-offset-1" onClick={onAddTask} disabled={!localPlan.id || isProductEmpty} aria-label="Añadir nueva tarea al plan">
+                <button type="button" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-emerald-200 active:scale-[0.97] ring-2 ring-emerald-300 ring-offset-1" onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10} aria-label="Añadir nueva tarea al plan">
                   <Plus size={20} aria-hidden="true" /> Añadir Tarea
                 </button>
                 {isProductEmpty && <span className="text-[0.85rem] text-slate-500 font-bold italic">* Debes definir un nombre de producto para añadir tareas.</span>}
@@ -400,6 +416,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
               <div className="flex flex-col gap-2">
                 <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700">Moderador: *</label>
                 <input id="moderator-name" type="text" maxLength={MAX_CHARS}
+                  aria-required="true" aria-invalid={warn.moderator || undefined}
                   className={fieldClass(warn.moderator, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
                   value={localPlan.moderator} placeholder="Nombre del facilitador"
                   onChange={(e) => handleChange({ moderator: e.target.value })}

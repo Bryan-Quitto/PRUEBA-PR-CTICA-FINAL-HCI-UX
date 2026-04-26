@@ -261,7 +261,7 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
             <StatusDropdown 
               value={statusFilter} 
               options={STATUS_FILTER_OPTIONS}
-              onChange={(val) => { setStatusFilter(val as any); setPage(1); }}
+              onChange={(val) => { setStatusFilter(val as typeof statusFilter); setPage(1); }}
               icon={Filter}
               headerLabel="Estado del Plan"
             />
@@ -270,7 +270,7 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
             <StatusDropdown 
               value={dateFilter} 
               options={DATE_FILTER_OPTIONS}
-              onChange={(val) => { setDateFilter(val as any); setPage(1); }}
+              onChange={(val) => { setDateFilter(val as typeof dateFilter); setPage(1); }}
               icon={Calendar}
               headerLabel="Rango de Fecha"
             />

@@ -3,7 +3,9 @@ import { Finding, Severity, Priority, TaskStatus } from '../models/types';
 import { Trash2, Plus, CheckCircle, RefreshCcw, AlertTriangle, Info, Check, X, ChevronDown, Star } from 'lucide-react';
 import AutoGrowTextarea from '../components/AutoGrowTextarea';
 import CustomSelect from '../components/CustomSelect';
-import { FieldWarning, CharCounter, fieldClass } from '../components/FieldWarning';
+import { FieldWarning } from '../components/FieldWarning';
+import { CharCounter } from '../components/CharCounter';
+import { fieldClass } from '../components/validation';
 
 // ... (existing constants)
 

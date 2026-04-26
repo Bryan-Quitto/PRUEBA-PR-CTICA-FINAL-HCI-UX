@@ -10,7 +10,9 @@ import {
 } from 'lucide-react';
 import AutoGrowTextarea from '../components/AutoGrowTextarea';
 import CustomSelect from '../components/CustomSelect';
-import { FieldWarning, CharCounter, fieldClass } from '../components/FieldWarning';
+import { FieldWarning } from '../components/FieldWarning';
+import { CharCounter } from '../components/CharCounter';
+import { fieldClass } from '../components/validation';
 
 // ... (existing constants)
 
@@ -482,7 +484,6 @@ const ObservationRow: React.FC<{
     handleLocalChange(obs.id!, { [field]: clamp(value) } as Partial<Observation>);
     setDismissedSugg(false);
   };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   /*const save = (field: keyof Observation) => (value: string) => {
     touch(field as string);
     handleActionWithStatus(() => onSave(obs.id!, { [field]: value } as Partial<Observation>));

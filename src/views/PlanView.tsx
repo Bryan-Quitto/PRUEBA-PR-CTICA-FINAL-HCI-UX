@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { TestPlan, TestTask } from '../models/types';
 import { Plus, Trash2, CheckCircle, RefreshCcw, Check, X, Info } from 'lucide-react';
 import AutoGrowTextarea from '../components/AutoGrowTextarea';
-import { FieldWarning, CharCounter, fieldClass } from '../components/FieldWarning';
+import { FieldWarning } from '../components/FieldWarning';
+import { CharCounter } from '../components/CharCounter';
+import { fieldClass } from '../components/validation';
 import { MAX_CHARS, clamp, validateDate } from '../components/validation';
 import { Tooltip } from '../components/Tooltip';
 

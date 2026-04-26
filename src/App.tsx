@@ -5,7 +5,7 @@ import { useAuth } from './controllers/useAuth';
 import { TabNavigation } from './components/TabNavigation';
 import Header from './components/Header';
 import { Trash2, AlertTriangle, ArrowLeft, Save } from 'lucide-react';
-import { DashboardTab } from './models/types';
+import { DashboardTab, TestPlan } from './models/types';
 import { FlowProgress } from './components/FlowProgress';
 
 // Lazy loading de vistas
@@ -104,7 +104,7 @@ const PlanDetailContainer: React.FC<{
     navigate(`/plan/${id}/${newTab}`);
   };
 
-  const onStatusChange = (newStatus: any) => {
+  const onStatusChange = (newStatus: TestPlan['status']) => {
     controller.setTestPlan({ ...testPlan, status: newStatus });
   };
 

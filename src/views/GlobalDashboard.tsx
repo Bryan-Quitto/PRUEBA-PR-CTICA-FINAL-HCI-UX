@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import { TestPlan, Observation, Finding } from '../models/types';
+import React, { useMemo, useState } from 'react';
+import { TestPlan, Observation, Finding, PlanStatus } from '../models/types';
 import {
   ClipboardList, TrendingUp, Clock,
   AlertTriangle, Shield, Plus, ArrowRight,
-  BarChart2, Users, Zap, Search, Trash2
+  BarChart2, Users, Zap, Search, Trash2, Filter, Calendar, X
 } from 'lucide-react';
 
 interface GlobalDashboardProps {
@@ -31,9 +31,11 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
   allPlans, allObservations, allFindings,
   onSelectPlan, onCreatePlan, onDeletePlan,
 }) => {
-  const [search, setSearch] = React.useState('');
-  const [page, setPage] = React.useState(1);
-  const [planToDelete, setPlanToDelete] = React.useState<TestPlan | null>(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<PlanStatus | 'Todos'>('Todos');
+  const [dateFilter, setDateFilter] = useState<'Todas' | 'Recientes' | 'Este mes' | 'Mes pasado'>('Todas');
+  const [page, setPage] = useState(1);
+  const [planToDelete, setPlanToDelete] = useState<TestPlan | null>(null);
   const PAGE_SIZE = 10;
 
   const global = useMemo(() => {
@@ -101,10 +103,36 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
     });
   }, [allPlans, allObservations, allFindings]);
 
-  const filtered = planMetrics.filter(pm =>
-    pm.plan.product?.toLowerCase().includes(search.toLowerCase()) ||
-    pm.plan.module?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = useMemo(() => {
+    return planMetrics.filter(pm => {
+      // Búsqueda de texto
+      const matchesSearch = pm.plan.product?.toLowerCase().includes(search.toLowerCase()) ||
+                           pm.plan.module?.toLowerCase().includes(search.toLowerCase());
+      
+      // Filtro de estado
+      const matchesStatus = statusFilter === 'Todos' || pm.plan.status === statusFilter;
+
+      // Filtro de fecha
+      let matchesDate = true;
+      if (dateFilter !== 'Todas' && pm.plan.created_at) {
+        const planDate = new Date(pm.plan.created_at);
+        const now = new Date();
+        if (dateFilter === 'Recientes') {
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(now.getDate() - 7);
+          matchesDate = planDate >= sevenDaysAgo;
+        } else if (dateFilter === 'Este mes') {
+          matchesDate = planDate.getMonth() === now.getMonth() && planDate.getFullYear() === now.getFullYear();
+        } else if (dateFilter === 'Mes pasado') {
+          const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+          const year = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+          matchesDate = planDate.getMonth() === lastMonth && planDate.getFullYear() === year;
+        }
+      }
+
+      return matchesSearch && matchesStatus && matchesDate;
+    });
+  }, [planMetrics, search, statusFilter, dateFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -190,33 +218,75 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
 
       {/* ══ LISTA DE PLANES ══ */}
       <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-6" aria-labelledby="gd-plans-title">
-        <div className="flex flex-wrap justify-between items-center gap-3 p-4 md:px-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+        <div className="flex flex-wrap justify-between items-center gap-4 p-4 md:px-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <h3 id="gd-plans-title" className="flex items-center gap-2 text-[0.9rem] font-extrabold text-navy uppercase tracking-wider">
+            <h3 id="gd-plans-title" className="flex items-center gap-2 text-[0.9rem] font-extrabold text-navy uppercase tracking-wider text-nowrap">
               <BarChart2 size={18} aria-hidden="true" /> Todos los planes
             </h3>
-            <span className="bg-blue-50 text-navy text-[0.8rem] font-bold px-2.5 py-0.5 rounded-full border border-blue-100">
-              {allPlans.length} plan{allPlans.length !== 1 ? 'es' : ''}
+            <span className="bg-blue-50 text-navy text-[0.8rem] font-bold px-2.5 py-0.5 rounded-full border border-blue-100 whitespace-nowrap">
+              {filtered.length} plan{filtered.length !== 1 ? 'es' : ''}
             </span>
           </div>
-          <div className="flex items-center gap-3 flex-1 sm:flex-none w-full sm:w-auto">
-            <div className="relative flex items-center flex-1 sm:flex-none">
-              <Search size={16} aria-hidden="true" className="absolute left-3 text-slate-400 pointer-events-none" />
+
+          <div className="flex flex-wrap items-center gap-3 flex-1 justify-end min-w-0">
+            {/* Buscador */}
+            <div className="relative flex items-center w-full sm:w-[200px]">
+              <Search size={15} aria-hidden="true" className="absolute left-3 text-slate-400 pointer-events-none" />
               <input
                 type="search"
                 placeholder="Buscar plan..."
                 value={search}
                 onChange={e => handleSearch(e.target.value)}
-                className="w-full sm:w-[220px] pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5"
-                aria-label="Buscar plan por producto o módulo"
+                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5"
               />
             </div>
+
+            {/* Filtro de Estado */}
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 min-w-[140px]">
+              <Filter size={14} className="text-slate-400" />
+              <select 
+                value={statusFilter} 
+                onChange={(e) => { setStatusFilter(e.target.value as any); setPage(1); }}
+                className="bg-transparent border-none text-[0.8rem] font-bold text-slate-700 outline-none cursor-pointer w-full"
+              >
+                <option value="Todos">Todos los estados</option>
+                <option value="Borrador">Borrador</option>
+                <option value="Activo">Activos</option>
+                <option value="Completado">Completados</option>
+              </select>
+            </div>
+
+            {/* Filtro de Fecha */}
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 min-w-[140px]">
+              <Calendar size={14} className="text-slate-400" />
+              <select 
+                value={dateFilter} 
+                onChange={(e) => { setDateFilter(e.target.value as any); setPage(1); }}
+                className="bg-transparent border-none text-[0.8rem] font-bold text-slate-700 outline-none cursor-pointer w-full"
+              >
+                <option value="Todas">Todas las fechas</option>
+                <option value="Recientes">Últimos 7 días</option>
+                <option value="Este mes">Este mes</option>
+                <option value="Mes pasado">Mes pasado</option>
+              </select>
+            </div>
+
+            {/* Reset Filtros */}
+            {(search || statusFilter !== 'Todos' || dateFilter !== 'Todas') && (
+              <button 
+                onClick={() => { setSearch(''); setStatusFilter('Todos'); setDateFilter('Todas'); setPage(1); }}
+                className="p-2 text-slate-400 hover:text-navy transition-colors bg-transparent border-none cursor-pointer"
+                title="Limpiar filtros"
+              >
+                <X size={18} />
+              </button>
+            )}
+
             <button 
               className="inline-flex items-center gap-1.5 bg-navy text-white border-none rounded-lg px-4 py-2 text-sm font-bold cursor-pointer transition-all hover:bg-navy-dark active:scale-[0.98] whitespace-nowrap" 
               onClick={onCreatePlan} 
-              aria-label="Crear nuevo plan de prueba"
             >
-              <Plus size={16} aria-hidden="true" /> <span className="hidden sm:inline">Nuevo plan</span>
+              <Plus size={16} aria-hidden="true" /> <span>Nuevo plan</span>
             </button>
           </div>
         </div>

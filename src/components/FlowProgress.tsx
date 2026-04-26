@@ -18,6 +18,22 @@ const steps = [
   { id: 'reports',      label: 'Reporte',       },
 ];
 
+/**
+ * Indicador de progreso del flujo de usabilidad.
+ *
+ * [Fase 4 — Espacio] Padding interno p-5 con separación de pasos
+ * mediante conectores flex-1. El espacio entre el encabezado y los
+ * pasos (mb-4) es mayor que el espacio entre paso y etiqueta (gap-1.5),
+ * aplicando la Ley de Proximidad de Gestalt.
+ *
+ * [Fase 5 — Guía de atención] El paso activo recibe ring-4 ring-navy/20
+ * y scale-110: tamaño mayor + anillo de enfoque actúan como señal
+ * pre-atentiva de "estás aquí" sin requerir lectura consciente.
+ * Implementa Nielsen #1 (Visibilidad del estado del sistema).
+ * Los pasos completados usan emerald para comunicar logro.
+ * Los pasos pendientes usan slate neutro para no competir visualmente
+ * con el paso activo — jerarquía de atención por contraste relativo.
+ */
 export const FlowProgress: React.FC<FlowProgressProps> = ({
   activeTab, testPlan, tasksCount, observationsCount, findingsCount,
 }) => {
@@ -34,88 +50,78 @@ export const FlowProgress: React.FC<FlowProgressProps> = ({
   const progressPct    = Math.round((completedCount / steps.length) * 100);
 
   return (
-    <div style={{
-      background: '#fff',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      padding: '16px 20px',
-      marginBottom: '16px',
-      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-    }}>
+    <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4 shadow-sm">
 
       {/* Encabezado */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-widest">
           Progreso del plan
         </span>
-        <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#003366' }}>
+        <span className="text-[0.72rem] font-extrabold text-navy">
           {completedCount} de {steps.length} · {progressPct}%
         </span>
       </div>
 
       {/* Barra global */}
-      <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '99px', overflow: 'hidden', marginBottom: '16px' }}>
-        <div style={{
-          height: '100%',
-          width: `${progressPct}%`,
-          background: 'linear-gradient(90deg, #003366, #3b82f6)',
-          borderRadius: '99px',
-          transition: 'width 0.7s ease',
-        }} />
+      <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mb-4">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-navy to-blue-500 transition-all duration-700"
+          style={{ width: `${progressPct}%` }}
+          role="progressbar"
+          aria-valuenow={progressPct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Progreso general: ${progressPct}%`}
+        />
       </div>
 
       {/* Pasos */}
-      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+      <div className="flex items-center w-full">
         {steps.map((step, idx) => {
-          const complete = isStepComplete(step.id);
-          const active   = activeTab === step.id;
-          const isLast   = idx === steps.length - 1;
+          const complete   = isStepComplete(step.id);
+          const active     = activeTab === step.id;
+          const isLast     = idx === steps.length - 1;
           const statusText = complete ? 'completado' : active ? 'activo' : 'pendiente';
 
           return (
             <React.Fragment key={step.id}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                <div 
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.7rem',
-                    fontWeight: 800,
-                    border: '2px solid',
-                    transition: 'all 0.3s',
-                    backgroundColor: complete ? '#059669' : active ? '#003366' : '#f1f5f9',
-                    borderColor:     complete ? '#059669' : active ? '#003366' : '#cbd5e1',
-                    color:           complete ? '#fff'    : active ? '#fff'    : '#1e293b',
-                  }}
+              <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                {/*
+                  [Fase 5 — Guía de atención]
+                  Activo: w-9 h-9 + ring-4 ring-navy/20 + scale-110
+                    → 12% más grande + anillo exterior = señal pre-atentiva doble.
+                    El usuario detecta "dónde está" antes de leer la etiqueta.
+                  Completo: emerald w-8 h-8 → logro visual sin competir con activo.
+                  Pendiente: slate w-8 h-8 → neutro, no roba atención.
+                  Esta jerarquía de atención sigue el principio de pre-atención
+                  visual (Ware, 2004): tamaño + color saturado atraen primero.
+                */}
+                <div
+                  className={`rounded-full flex items-center justify-center text-[0.7rem] font-extrabold border-2 transition-all duration-300 ${
+                    complete
+                      ? 'w-8 h-8 bg-emerald-600 border-emerald-600 text-white'
+                      : active
+                        ? 'w-9 h-9 bg-navy border-navy text-white ring-4 ring-navy/20 scale-110'
+                        : 'w-8 h-8 bg-slate-100 border-slate-300 text-slate-800'
+                  }`}
                   role="img"
-                  aria-label={`Paso ${idx + 1}: ${step.label} - ${statusText}`}
+                  aria-label={`Paso ${idx + 1}: ${step.label} — ${statusText}`}
                 >
                   {complete ? <Check size={14} strokeWidth={3} aria-hidden="true" /> : idx + 1}
                 </div>
-                <span style={{
-                  fontSize: '0.6rem',
-                  fontWeight: 700,
-                  color: complete ? '#059669' : active ? '#003366' : '#1e293b',
-                  whiteSpace: 'nowrap',
-                }}>
+
+                <span className={`text-[0.6rem] font-bold whitespace-nowrap transition-colors ${
+                  complete ? 'text-emerald-600' : active ? 'text-navy font-extrabold' : 'text-slate-500'
+                }`}>
                   {step.label}
                 </span>
               </div>
 
+              {/* Conector — verde cuando el paso izquierdo está completo */}
               {!isLast && (
-                <div style={{
-                  flex: 1,
-                  height: '2px',
-                  margin: '0 4px',
-                  marginBottom: '18px',
-                  borderRadius: '99px',
-                  backgroundColor: complete ? '#059669' : '#e2e8f0',
-                  transition: 'background-color 0.5s',
-                }} />
+                <div className={`flex-1 h-0.5 mx-1 mb-4 rounded-full transition-all duration-500 ${
+                  complete ? 'bg-emerald-500' : 'bg-slate-200'
+                }`} />
               )}
             </React.Fragment>
           );

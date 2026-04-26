@@ -18,7 +18,7 @@ import {
   PROPOSAL_SUGGESTIONS,
 } from '../utils/observationsAnalysis';
 import { SeveritySuggestion } from '../components/SeveritySuggestion';
-import { SuggestionsInput }   from '../components/SuggestionsInput';
+import { SuggestionsInput } from '../components/SuggestionsInput';
 
 interface ObservationsViewProps {
   data: Observation[];
@@ -42,10 +42,10 @@ const PROFILE_OPTIONS = [
 ] as const;
 
 const severityStyles: Record<string, { bg: string; text: string; border: string }> = {
-  Baja:    { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-300' },
-  Media:   { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-300' },
-  Alta:    { bg: 'bg-orange-50', text: 'text-orange-800', border: 'border-orange-300' },
-  'Crítica':{ bg: 'bg-red-50',   text: 'text-red-800',    border: 'border-red-300' },
+  Baja: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-300' },
+  Media: { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-300' },
+  Alta: { bg: 'bg-orange-50', text: 'text-orange-800', border: 'border-orange-300' },
+  'Crítica': { bg: 'bg-red-50', text: 'text-red-800', border: 'border-red-300' },
 };
 
 const SEVERITY_WEIGHTS: Record<Severity, number> = {
@@ -53,9 +53,9 @@ const SEVERITY_WEIGHTS: Record<Severity, number> = {
 };
 
 const successStyles: Record<string, { bg: string; text: string; border: string }> = {
-  'Sí':        { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-300' },
-  'No':        { bg: 'bg-red-50',    text: 'text-red-800',    border: 'border-red-300' },
-  'Con ayuda': { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-300' },
+  'Sí': { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-300' },
+  'No': { bg: 'bg-red-50', text: 'text-red-800', border: 'border-red-300' },
+  'Con ayuda': { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-300' },
 };
 
 function useWindowWidth() {
@@ -70,9 +70,9 @@ function useWindowWidth() {
 
 const Tooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => {
   const [visible, setVisible] = useState(false);
-  const [coords, setCoords]   = useState({ left: 0, top: 0 });
-  const triggerRef            = useRef<HTMLDivElement>(null);
-  const tipId                 = useRef(`tip-${Math.random().toString(36).slice(2)}`);
+  const [coords, setCoords] = useState({ left: 0, top: 0 });
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const tipId = useRef(`tip-${Math.random().toString(36).slice(2)}`);
 
   useEffect(() => {
     if (visible && triggerRef.current) {
@@ -199,20 +199,20 @@ const ObservationCard: React.FC<{
   tasks?: { task_index: string; scenario: string }[];
 }> = ({ obs, idx, onLocalChange, onSave, onDelete, onAction, tasks = [] }) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [touched, setTouched]             = useState<Record<string, boolean>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [dismissedSugg, setDismissedSugg] = useState(false);
   const touch = (f: string) => setTouched(p => ({ ...p, [f]: true }));
 
-  const sStyle  = severityStyles[obs.severity]     ?? severityStyles['Baja'];
+  const sStyle = severityStyles[obs.severity] ?? severityStyles['Baja'];
   const okStyle = successStyles[obs.success_level] ?? successStyles['Sí'];
 
   const isProblemRequired = obs.success_level === 'No';
-  const warnParticipant   = touched.participant && !obs.participant?.trim();
-  const warnTaskRef       = touched.task_ref    && !obs.task_ref?.trim();
-  const warnComments      = touched.comments    && !obs.comments?.trim();
-  const warnProblem       = touched.problem     && isProblemRequired && !obs.problem?.trim();
+  const warnParticipant = touched.participant && !obs.participant?.trim();
+  const warnTaskRef = touched.task_ref && !obs.task_ref?.trim();
+  const warnComments = touched.comments && !obs.comments?.trim();
+  const warnProblem = touched.problem && isProblemRequired && !obs.problem?.trim();
 
-  const suggestedSev   = suggestSeverity(obs);
+  const suggestedSev = suggestSeverity(obs);
   const showSuggestion = !dismissedSugg && suggestedSev !== obs.severity && (
     obs.success_level === 'No' || (obs.errors || 0) >= 2 || (obs.comments || '').length > 10
   );
@@ -495,20 +495,20 @@ const ObservationRow: React.FC<{
   tasks?: { task_index: string; scenario: string }[];
 }> = ({ obs, rowIndex, handleLocalChange, handleActionWithStatus, onSave, onDelete, tasks = [] }) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [touched, setTouched]             = useState<Record<string, boolean>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [dismissedSugg, setDismissedSugg] = useState(false);
   const touch = (f: string) => setTouched(p => ({ ...p, [f]: true }));
 
-  const sStyle  = severityStyles[obs.severity]     ?? severityStyles['Baja'];
+  const sStyle = severityStyles[obs.severity] ?? severityStyles['Baja'];
   const okStyle = successStyles[obs.success_level] ?? successStyles['Sí'];
 
   const isProblemRequired = obs.success_level === 'No';
-  const warnParticipant   = touched.participant && !obs.participant?.trim();
-  const warnTaskRef       = touched.task_ref    && !obs.task_ref?.trim();
-  const warnComments      = touched.comments    && !obs.comments?.trim();
-  const warnProblem       = touched.problem     && isProblemRequired && !obs.problem?.trim();
+  const warnParticipant = touched.participant && !obs.participant?.trim();
+  const warnTaskRef = touched.task_ref && !obs.task_ref?.trim();
+  const warnComments = touched.comments && !obs.comments?.trim();
+  const warnProblem = touched.problem && isProblemRequired && !obs.problem?.trim();
 
-  const suggestedSev   = suggestSeverity(obs);
+  const suggestedSev = suggestSeverity(obs);
   const showSuggestion = !dismissedSugg && suggestedSev !== obs.severity && (
     obs.success_level === 'No' || (obs.errors || 0) >= 2 || (obs.comments || '').length > 10
   );
@@ -739,10 +739,10 @@ export const ObservationsView: React.FC<ObservationsViewProps> = ({
   data, onSync, onAdd, onSave, onDelete,
   planId, productName, onGoToPlan, tasks = [],
 }) => {
-  const width    = useWindowWidth();
+  const width = useWindowWidth();
   const isMobile = width < 1024;
-  const [isSaving, setIsSaving]         = useState(false);
-  const [sortMode, setSortMode]         = useState<'desc' | 'asc' | 'default'>('default');
+  const [isSaving, setIsSaving] = useState(false);
+  const [sortMode, setSortMode] = useState<'desc' | 'asc' | 'default'>('default');
   const [showSortMenu, setShowSortMenu] = useState(false);
   const isProductEmpty = !productName || productName.trim() === '';
 
@@ -769,7 +769,7 @@ export const ObservationsView: React.FC<ObservationsViewProps> = ({
       {/* Header */}
       <header className="flex items-center justify-between bg-navy text-white p-4 md:px-6 rounded-xl mb-4 shadow-md min-h-[70px] gap-4">
         <div className="flex-1" aria-hidden="true" />
-        <h1 className="text-xl md:text-2xl font-bold m-0 text-center flex-1">
+        <h1 className="text-xl md:text-2xl font-bold m-0 text-center flex-1 text-white">
           Bitácora de observaciones
         </h1>
         <div role="status" aria-live="polite" aria-atomic="true"
@@ -777,11 +777,11 @@ export const ObservationsView: React.FC<ObservationsViewProps> = ({
         >
           {isSaving
             ? <span className="flex items-center gap-1.5 text-white animate-pulse">
-                <RefreshCcw size={14} className="animate-spin" aria-hidden="true" /> Guardando…
-              </span>
+              <RefreshCcw size={14} className="animate-spin" aria-hidden="true" /> Guardando…
+            </span>
             : <span className="flex items-center gap-1.5 text-emerald-300 font-bold">
-                <CheckCircle size={14} aria-hidden="true" /> Cambios guardados
-              </span>
+              <CheckCircle size={14} aria-hidden="true" /> Cambios guardados
+            </span>
           }
         </div>
       </header>
@@ -876,7 +876,7 @@ export const ObservationsView: React.FC<ObservationsViewProps> = ({
             {/* Vista DESKTOP */}
             {!isMobile && (
               <section className="bg-white border border-slate-200 rounded-xl shadow-sm" aria-labelledby="obs-tabla-heading">
-                <h2 id="obs-tabla-heading" className="bg-navy text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 rounded-t-xl">
+                <h2 id="obs-tabla-heading" className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 rounded-t-xl">
                   Observaciones registradas
                 </h2>
 

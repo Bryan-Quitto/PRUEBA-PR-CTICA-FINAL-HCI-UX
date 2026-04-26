@@ -11,23 +11,40 @@ interface TabNavigationProps {
   hasUnsavedChanges?: boolean;
 }
 
-export const TabNavigation: React.FC<TabNavigationProps> = ({ 
-  activeTab, 
-  onTabChange, 
-  onSave, 
+/**
+ * Barra de navegación por pestañas del dashboard.
+ *
+ * [Fase 2 — Color] Tab activo usa bg-hierarchy-l2 (#1e40af) en lugar del
+ * navy puro (#003366). Así los encabezados de sección (navy L1) tienen más
+ * peso visual que los tabs, estableciendo la jerarquía:
+ *   Encabezado de sección (L1 #003366) > Tab activo (L2 #1e40af) > Tab inactivo (slate)
+ *
+ * [Fase 4 — Espacio] px-4 md:px-8 en el nav y mb-8 bajo él crean un
+ * ritmo espacial consistente: el espacio entre el nav y el contenido (32px)
+ * es mayor que el espacio interno de cada tab (py-3 = 12px × 2), cumpliendo
+ * la Ley de Proximidad de Gestalt (espacio entre grupos ≥ 2× espacio interno).
+ */
+export const TabNavigation: React.FC<TabNavigationProps> = ({
+  activeTab,
+  onTabChange,
+  onSave,
   saveStatus = 'idle',
-  hasUnsavedChanges = false 
+  hasUnsavedChanges = false
 }) => {
   const tabs: { id: DashboardTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'plan',         label: 'Plan de Prueba',       icon: <ClipboardList size={18} aria-hidden="true" /> },
-    { id: 'script',       label: 'Guion y Tareas',        icon: <FileText      size={18} aria-hidden="true" /> },
-    { id: 'observations', label: 'Registro Observación',  icon: <Search        size={18} aria-hidden="true" /> },
-    { id: 'findings',     label: 'Hallazgos y Mejoras',   icon: <BarChart      size={18} aria-hidden="true" /> },
-    { id: 'reports',      label: 'Reportes',              icon: <BarChart2     size={18} aria-hidden="true" /> },
+    { id: 'plan',         label: 'Plan de Prueba',      icon: <ClipboardList size={18} aria-hidden="true" /> },
+    { id: 'script',       label: 'Guion y Tareas',       icon: <FileText      size={18} aria-hidden="true" /> },
+    { id: 'observations', label: 'Registro Observación', icon: <Search        size={18} aria-hidden="true" /> },
+    { id: 'findings',     label: 'Hallazgos y Mejoras',  icon: <BarChart      size={18} aria-hidden="true" /> },
+    { id: 'reports',      label: 'Reportes',             icon: <BarChart2     size={18} aria-hidden="true" /> },
   ];
 
   return (
-    <nav className="sticky top-0 z-[900] bg-white flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b-[3px] border-navy mb-8 py-2 gap-4 shadow-sm" role="navigation" aria-label="Navegación del plan">
+    <nav
+      className="sticky top-0 z-[900] bg-white flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b-[3px] border-navy mb-8 py-2 px-4 md:px-8 gap-4 shadow-sm"
+      role="navigation"
+      aria-label="Navegación del plan"
+    >
       <div className="flex gap-1 overflow-x-auto no-scrollbar flex-nowrap" role="tablist">
         {tabs.map((tab) => (
           <button
@@ -37,8 +54,8 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
             aria-controls={`${tab.id}-panel`}
             id={`${tab.id}-tab`}
             className={`px-4 md:px-6 py-3 border-none font-bold cursor-pointer rounded-t-lg text-[0.9rem] transition-all whitespace-nowrap flex-shrink-0 flex items-center gap-2 ${
-              activeTab === tab.id 
-                ? 'bg-navy text-white' 
+              activeTab === tab.id
+                ? 'bg-hierarchy-l2 text-white'
                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-navy'
             }`}
             onMouseDown={(e) => {
@@ -60,7 +77,8 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
             onClick={onSave}
             disabled={saveStatus !== 'idle'}
             className={`btn-save-sticky ${saveStatus} ${hasUnsavedChanges ? 'unsaved' : ''} w-full sm:w-auto justify-center`}
-            title={hasUnsavedChanges ? "Tienes cambios sin guardar" : "Guardar cambios"}
+            title={hasUnsavedChanges ? 'Tienes cambios sin guardar' : 'Guardar cambios'}
+            aria-label={hasUnsavedChanges ? 'Guardar cambios pendientes' : 'Guardar'}
           >
             {saveStatus === 'saving' ? (
               <Loader2 size={18} className="spin" aria-hidden="true" />

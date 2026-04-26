@@ -51,6 +51,20 @@ const PlanDetailContainer: React.FC<{
     hasUnsavedChanges, loading
   } = controller;
 
+  const tabLabels: Record<DashboardTab, string> = {
+    plan: 'Planificación',
+    script: 'Guion de Test',
+    observations: 'Observaciones',
+    findings: 'Hallazgos',
+    reports: 'Resultados y Reportes'
+  };
+
+  const breadcrumbItems = [
+    { label: 'Proyectos', path: '/' },
+    { label: testPlan.product || 'Nuevo Plan', path: `/plan/${id}/plan` },
+    { label: tabLabels[activeTab] || 'Plan', active: true }
+  ];
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success'>('idle');
@@ -145,6 +159,7 @@ const PlanDetailContainer: React.FC<{
           onSave={onManualSave}
           saveStatus={saveStatus}
           hasUnsavedChanges={hasUnsavedChanges}
+          breadcrumbItems={breadcrumbItems}
         />
 
         <Suspense fallback={<LazyLoader />}>

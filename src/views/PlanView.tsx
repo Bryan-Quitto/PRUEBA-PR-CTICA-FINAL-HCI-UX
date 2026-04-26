@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TestPlan, TestTask } from '../models/types';
-import { Plus, Trash2, CheckCircle, RefreshCcw, Check, X } from 'lucide-react';
+import { Plus, Trash2, CheckCircle, RefreshCcw, Check, X, Info } from 'lucide-react';
 import AutoGrowTextarea from '../components/AutoGrowTextarea';
 import { FieldWarning, CharCounter, fieldClass } from '../components/FieldWarning';
 import { MAX_CHARS, clamp, validateDate } from '../components/validation';
+import { Tooltip } from '../components/Tooltip';
 
 function useWindowWidth() {
   const [width, setWidth] = useState(() => window.innerWidth);
@@ -59,18 +60,12 @@ const TaskCard: React.FC<{
         )}
       </div>
 
-      {/* [Fase 4 — Espacio] p-4 con gap-4 entre campos (16px interno).
-          El card entero tiene mb-0 controlado por el gap-4 del contenedor padre,
-          que debe ser ≥ 2× el gap interno para cumplir Ley de Proximidad. */}
       <div className="p-4 flex flex-col gap-4">
         <div className="field-group">
-          {/* [Fase 3 — Contraste] text-slate-700 = ratio 8:1 sobre blanco ✓ WCAG AA */}
           <label htmlFor={`m-scenario-${task.id}`} className="font-black text-[0.7rem] text-slate-700 uppercase tracking-widest">
             Escenario / tarea <span className="text-red-600" aria-hidden="true">*</span>
-            <span className="sr-only">(obligatorio)</span>
           </label>
           <input id={`m-scenario-${task.id}`} type="text" maxLength={MAX_CHARS}
-            aria-required="true"
             className={fieldClass(warnScenario, "w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none transition-all", 'error')}
             value={task.scenario || ''} onChange={e => handleChange('scenario', e.target.value)}
             onBlur={e => { touch('scenario'); onSaveTask(task.id!, { scenario: e.target.value }); }}
@@ -244,8 +239,8 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
       <header className="flex items-center justify-between bg-navy text-white p-4 md:px-6 rounded-xl mb-8 shadow-md min-h-[70px] gap-4">
         <div className="flex-1" />
-        <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1 text-white">
-          Plan de Pruebas de Usabilidad
+        <h2 className="text-lg md:text-xl font-black m-0 text-center flex-1 text-white uppercase tracking-widest">
+          Planificación del Test
         </h2>
         <div className="flex-1 flex justify-end items-center gap-2 text-sm font-bold opacity-90 text-right" aria-live="polite" aria-atomic="true">
           {isSaving ? (
@@ -262,60 +257,50 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
       <div className="space-y-8">
 
-        {/* ── 1. Contexto general ── */}
+        {/* ── 1. CONTEXTO DEL PRODUCTO ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          {/*
-            [Fase 5 — Guía de atención] El dot de estado en el header comunica
-            pre-atentivamente si la sección está completa o tiene campos pendientes.
-            Verde (emerald) = sección completa → puede avanzar.
-            Ámbar (amber) = sección incompleta → requiere atención.
-            El dot es procesado por el sistema visual antes de leer el texto
-            (principio de pre-atención, Ware 2004). Implementa Nielsen #1
-            (Visibilidad del estado del sistema) sin texto adicional.
-            aria-label en el dot describe el estado para lectores de pantalla.
-          */}
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
-            <span>1. Contexto general</span>
-            {/* Dot: verde si product + objective + user_profile + method + duration + location_channel tienen valor */}
+            <span className="flex items-center gap-2">
+              1. Contexto del Producto
+              <Tooltip text="Información básica sobre qué se va a evaluar.">
+                <Info size={14} className="text-white/70" />
+              </Tooltip>
+            </span>
             <span
-              className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.product && localPlan.objective && localPlan.user_profile &&
-                  localPlan.method && localPlan.duration && localPlan.location_channel
+              className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.product && localPlan.module && localPlan.objective
                   ? 'bg-emerald-400'
                   : 'bg-amber-400'
                 }`}
-              aria-label={
-                localPlan.product && localPlan.objective && localPlan.user_profile &&
-                  localPlan.method && localPlan.duration && localPlan.location_channel
-                  ? 'Sección completa'
-                  : 'Sección incompleta — hay campos obligatorios vacíos'
-              }
+              aria-label="Estado de la sección"
             />
           </h2>
 
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="field-group">
-                <label htmlFor="product-name" className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  Producto / servicio:
+                <label htmlFor="product-name" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                  Nombre del Producto / Servicio:
                   <span className="text-red-600" aria-hidden="true">*</span>
-                  <span className="sr-only">(obligatorio)</span>
-                  {isProductEmpty && <span className="text-amber-600 text-[0.75rem] font-black uppercase">(Obligatorio)</span>}
                 </label>
                 <input id="product-name" type="text" maxLength={MAX_CHARS}
-                  aria-required="true" aria-invalid={warn.product || undefined}
                   className={`w-full p-3 border rounded-lg text-base transition-all focus:outline-none focus:ring-4 focus:ring-navy/5 ${isProductEmpty && touched.product ? 'border-amber-400 bg-amber-50' : 'border-slate-200 bg-white focus:border-navy'}`}
-                  value={localPlan.product} placeholder="Ej: App de Delivery 'Rápido', E-commerce, etc."
+                  value={localPlan.product} placeholder="Ej: App de Delivery 'Rápido'"
                   onChange={(e) => handleChange({ product: e.target.value })}
                   onBlur={(e) => { touch('product'); handleAutoSave({ product: e.target.value }); }} />
                 <CharCounter value={localPlan.product} />
-                <FieldWarning show={warn.product} message="Ingrese el nombre del producto para mayor claridad." variant="error" />
+                <FieldWarning show={warn.product} message="El nombre es obligatorio para identificar el plan." variant="error" />
               </div>
 
               <div className="field-group">
-                <label htmlFor="module-name" className="text-sm font-bold text-slate-700">Pantalla / módulo:</label>
+                <label htmlFor="module-name" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                  Módulo o Pantalla Específica:
+                  <Tooltip text="Parte específica del sistema que se someterá a prueba.">
+                    <Info size={13} className="text-slate-400" />
+                  </Tooltip>
+                </label>
                 <input id="module-name" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
-                  value={localPlan.module} placeholder="Ej: Proceso de checkout, Registro de usuario, etc."
+                  value={localPlan.module} placeholder="Ej: Proceso de pago (Checkout)"
                   onChange={(e) => handleChange({ module: e.target.value })}
                   onBlur={(e) => handleAutoSave({ module: e.target.value })} />
                 <CharCounter value={localPlan.module} />
@@ -323,114 +308,162 @@ export const PlanView: React.FC<PlanViewProps> = ({
             </div>
 
             <div className="field-group">
-              <label htmlFor="test-objective" className="text-sm font-bold text-slate-700">
-                Objetivo del test: <span className="text-red-600" aria-hidden="true">*</span>
-                <span className="sr-only">(obligatorio)</span>
+              <label htmlFor="test-objective" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                Objetivo de la Evaluación:
+                <span className="text-red-600" aria-hidden="true">*</span>
+                <Tooltip text="¿Qué quieres descubrir o validar con este test?">
+                  <Info size={13} className="text-slate-400" />
+                </Tooltip>
               </label>
               <AutoGrowTextarea id="test-objective"
-                aria-required="true" aria-invalid={warn.objective || undefined}
                 className={fieldClass(warn.objective, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                value={localPlan.objective} placeholder="Ej: Evaluar la facilidad de navegación y el tiempo de completado del flujo de compra."
+                value={localPlan.objective} placeholder="Ej: Validar si los usuarios pueden completar una compra en menos de 2 minutos sin errores."
                 onChange={(e) => handleChange({ objective: e.target.value })}
                 onBlur={(e) => { touch('objective'); handleAutoSave({ objective: e.target.value }); }} rows={2} />
               <CharCounter value={localPlan.objective} />
-              <FieldWarning show={warn.objective} message="El objetivo del test no debe estar vacío." variant="error" />
+              <FieldWarning show={warn.objective} message="Define qué esperas lograr con esta prueba." variant="error" />
             </div>
+          </div>
+        </section>
 
+        {/* ── 2. ESTRATEGIA Y PARTICIPANTES ── */}
+        <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              2. Estrategia y Participantes
+              <Tooltip text="Cómo se ejecutará el test y a quién va dirigido.">
+                <Info size={14} className="text-white/70" />
+              </Tooltip>
+            </span>
+            <span
+              className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.user_profile && localPlan.method && localPlan.duration
+                  ? 'bg-emerald-400'
+                  : 'bg-amber-400'
+                }`}
+              aria-label="Estado de la sección"
+            />
+          </h2>
+          <div className="p-6 space-y-6">
             <div className="field-group">
-              <label htmlFor="user-profile" className="text-sm font-bold text-slate-700">
-                Perfil de usuarios: <span className="text-red-600" aria-hidden="true">*</span>
-                <span className="sr-only">(obligatorio)</span>
+              <label htmlFor="user-profile" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                Perfil del Usuario (Target):
+                <span className="text-red-600" aria-hidden="true">*</span>
+                <Tooltip text="Características demográficas y psicográficas de los participantes.">
+                  <Info size={13} className="text-slate-400" />
+                </Tooltip>
               </label>
               <input id="user-profile" type="text" maxLength={MAX_CHARS}
-                aria-required="true" aria-invalid={warn.user_profile || undefined}
                 className={fieldClass(warn.user_profile, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                value={localPlan.user_profile} placeholder="Ej: Usuarios de 25-40 años, con experiencia en compras online."
+                value={localPlan.user_profile} placeholder="Ej: Estudiantes universitarios, 18-25 años, usan banca móvil."
                 onChange={(e) => handleChange({ user_profile: e.target.value })}
                 onBlur={(e) => { touch('user_profile'); handleAutoSave({ user_profile: e.target.value }); }} />
               <CharCounter value={localPlan.user_profile} />
-              <FieldWarning show={warn.user_profile} message="Describe el perfil de los usuarios que participarán en el test." variant="error" />
+              <FieldWarning show={warn.user_profile} message="Describe a quién va dirigida la prueba." variant="error" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="field-group">
-                <label htmlFor="test-method" className="text-sm font-bold text-slate-700">
-                  Método: <span className="text-red-600" aria-hidden="true">*</span>
-                  <span className="sr-only">(obligatorio)</span>
+                <label htmlFor="test-method" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                  Metodología:
+                  <span className="text-red-600" aria-hidden="true">*</span>
+                  <Tooltip text="Técnica a usar: Pensamiento en voz alta, Entrevista, Moderado, etc.">
+                    <Info size={13} className="text-slate-400" />
+                  </Tooltip>
                 </label>
                 <input id="test-method" type="text" maxLength={MAX_CHARS}
-                  aria-required="true" aria-invalid={warn.method || undefined}
                   className={fieldClass(warn.method, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                  value={localPlan.method} placeholder="Ej: Moderado, remoto, presencial..."
+                  value={localPlan.method} placeholder="Ej: Test moderado con Think Aloud"
                   onChange={(e) => handleChange({ method: e.target.value })}
                   onBlur={(e) => { touch('method'); handleAutoSave({ method: e.target.value }); }} />
                 <CharCounter value={localPlan.method} />
-                <FieldWarning show={warn.method} message="Especifique el método de evaluación." variant="error" />
+                <FieldWarning show={warn.method} message="Indica el método de investigación." variant="error" />
               </div>
 
               <div className="field-group">
-                <label htmlFor="test-duration" className="text-sm font-bold text-slate-700">
-                  Duración: <span className="text-red-600" aria-hidden="true">*</span>
-                  <span className="sr-only">(obligatorio)</span>
+                <label htmlFor="test-duration" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                  Duración por Sesión:
+                  <span className="text-red-600" aria-hidden="true">*</span>
                 </label>
                 <input id="test-duration" type="text" maxLength={MAX_CHARS}
-                  aria-required="true" aria-invalid={warn.duration || undefined}
                   className={fieldClass(warn.duration, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                  value={localPlan.duration} placeholder="Ej: 45 min por sesión."
+                  value={localPlan.duration} placeholder="Ej: 30 a 45 minutos"
                   onChange={(e) => handleChange({ duration: e.target.value })}
                   onBlur={(e) => { touch('duration'); handleAutoSave({ duration: e.target.value }); }} />
                 <CharCounter value={localPlan.duration} />
-                <FieldWarning show={warn.duration} message="Indique la duración estimada de cada sesión." variant="error" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="field-group">
-                <label htmlFor="test-date" className="text-sm font-bold text-slate-700">
-                  Fecha del test: <span className="text-red-600" aria-hidden="true">*</span>
-                  <span className="sr-only">(obligatorio)</span>
-                  <span className="text-slate-400 font-normal text-xs ml-1">(máx. 2 semanas atrás)</span>
-                </label>
-                <input id="test-date" type="date" min={minDate}
-                  aria-required="true" aria-invalid={warn.test_date || undefined}
-                  className={fieldClass(warn.test_date, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                  value={localPlan.test_date || ''}
-                  onChange={(e) => handleChange({ test_date: e.target.value })}
-                  onBlur={(e) => { touch('test_date'); handleAutoSave({ test_date: e.target.value }); }} />
-                <FieldWarning show={warn.test_date} message={dateError || 'Seleccione la fecha del test (día/mes/año completos).'} />
-              </div>
-
-              <div className="field-group">
-                <label htmlFor="location-channel" className="text-sm font-bold text-slate-700">
-                  Lugar / canal: <span className="text-red-600" aria-hidden="true">*</span>
-                  <span className="sr-only">(obligatorio)</span>
-                </label>
-                <input id="location-channel" type="text" maxLength={MAX_CHARS}
-                  aria-required="true" aria-invalid={warn.location_channel || undefined}
-                  className={fieldClass(warn.location_channel, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                  value={localPlan.location_channel} placeholder="Ej: Google Meet, Oficina 302..."
-                  onChange={(e) => handleChange({ location_channel: e.target.value })}
-                  onBlur={(e) => { touch('location_channel'); handleAutoSave({ location_channel: e.target.value }); }} />
-                <CharCounter value={localPlan.location_channel} />
-                <FieldWarning show={warn.location_channel} message="Indique el lugar o canal donde se realizará el test." variant="error" />
+                <FieldWarning show={warn.duration} message="Establece un tiempo estimado." variant="error" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── 2. Tareas del test ── */}
+        {/* ── 3. CRONOGRAMA Y LOGÍSTICA ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
-            <span>2. Tareas del test</span>
+            <span className="flex items-center gap-2">
+              3. Cronograma y Logística
+              <Tooltip text="Cuándo y dónde se realizarán las sesiones.">
+                <Info size={14} className="text-white/70" />
+              </Tooltip>
+            </span>
+            <span
+              className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.test_date && localPlan.location_channel && localPlan.moderator
+                  ? 'bg-emerald-400'
+                  : 'bg-amber-400'
+                }`}
+              aria-label="Estado de la sección"
+            />
+          </h2>
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="field-group">
+                <label htmlFor="test-date" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                  Fecha Programada:
+                  <span className="text-red-600" aria-hidden="true">*</span>
+                </label>
+                <input id="test-date" type="date" min={minDate}
+                  className={fieldClass(warn.test_date, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
+                  value={localPlan.test_date || ''}
+                  onChange={(e) => handleChange({ test_date: e.target.value })}
+                  onBlur={(e) => { touch('test_date'); handleAutoSave({ test_date: e.target.value }); }} />
+                <FieldWarning show={warn.test_date} message={dateError || 'Selecciona una fecha válida.'} />
+              </div>
+
+              <div className="field-group">
+                <label htmlFor="location-channel" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">
+                  Lugar o Canal:
+                  <span className="text-red-600" aria-hidden="true">*</span>
+                  <Tooltip text="Plataforma online (Zoom, Meet) o lugar físico.">
+                    <Info size={13} className="text-slate-400" />
+                  </Tooltip>
+                </label>
+                <input id="location-channel" type="text" maxLength={MAX_CHARS}
+                  className={fieldClass(warn.location_channel, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
+                  value={localPlan.location_channel} placeholder="Ej: Google Meet / Oficina IHC"
+                  onChange={(e) => handleChange({ location_channel: e.target.value })}
+                  onBlur={(e) => { touch('location_channel'); handleAutoSave({ location_channel: e.target.value }); }} />
+                <CharCounter value={localPlan.location_channel} />
+                <FieldWarning show={warn.location_channel} message="Especifica dónde ocurrirá la sesión." variant="error" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 4. TAREAS DEL TEST ── */}
+        <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              4. Tareas del Test
+              <Tooltip text="Actividades que el usuario realizará durante la sesión.">
+                <Info size={14} className="text-white/70" />
+              </Tooltip>
+            </span>
             <div className="flex items-center gap-3">
               <span className={`text-sm font-bold normal-case tracking-normal ${tasks.length >= 10 ? 'text-red-300' : 'text-white/70'}`}>
-                {tasks.length}/10 tareas{tasks.length >= 10 && ' — límite alcanzado'}
+                {tasks.length}/10 tareas
               </span>
-              {/* Dot: verde si hay al menos 1 tarea, ámbar si no hay ninguna */}
               <span
                 className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${tasks.length > 0 ? 'bg-emerald-400' : 'bg-amber-400'
                   }`}
-                aria-label={tasks.length > 0 ? 'Sección completa' : 'Sección incompleta — añade al menos una tarea'}
               />
             </div>
           </h2>
@@ -438,19 +471,17 @@ export const PlanView: React.FC<PlanViewProps> = ({
           {isMobile && (
             <div className="p-4 flex flex-col gap-4">
               {tasks.length === 0 ? (
-                <p className="text-center text-slate-500 py-8 italic font-medium">No hay tareas añadidas. Haz clic en el botón de abajo para empezar.</p>
+                <p className="text-center text-slate-500 py-8 italic font-medium">No hay tareas añadidas.</p>
               ) : (
                 tasks.map((task) => (
                   <TaskCard key={task.id} task={task} handleTaskChange={handleTaskChange} onSaveTask={onSaveTask} onDeleteTask={onDeleteTask} />
                 ))
               )}
               <button type="button"
-                className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none p-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-xl shadow-emerald-200 mt-2 active:scale-[0.97] w-full ring-2 ring-emerald-300 ring-offset-1"
-                onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10}
-                aria-label="Añadir nueva tarea al plan">
+                className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none p-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-pointer transition-all disabled:bg-slate-300 shadow-xl mt-2 w-full"
+                onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10}>
                 <Plus size={20} aria-hidden="true" /> Añadir Tarea
               </button>
-              {isProductEmpty && <span className="text-[0.8rem] text-slate-500 italic text-center mt-1">* Debes definir un nombre de producto para añadir tareas.</span>}
             </div>
           )}
 
@@ -458,15 +489,14 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
-                  <caption className="sr-only">Listado de tareas detalladas para la prueba de usabilidad</caption>
                   <thead>
-                    <tr className="bg-navy text-white text-[0.75rem] font-black uppercase tracking-[0.1em]">
-                      <th scope="col" className="p-4 text-center border-r border-white/10 w-[60px]">ID</th>
-                      <th scope="col" className="p-4 text-left border-r border-white/10">Escenario / tarea</th>
-                      <th scope="col" className="p-4 text-left border-r border-white/10">Resultado esperado</th>
-                      <th scope="col" className="p-4 text-left border-r border-white/10">Métrica principal</th>
-                      <th scope="col" className="p-4 text-left border-r border-white/10">Criterio de éxito</th>
-                      <th scope="col" className="p-4 text-center w-[80px]" aria-label="Acciones de eliminación"></th>
+                    <tr className="bg-navy text-white text-[0.75rem] font-black uppercase tracking-widest">
+                      <th className="p-4 text-center border-r border-white/10 w-[60px]">ID</th>
+                      <th className="p-4 text-left border-r border-white/10">Escenario / tarea</th>
+                      <th className="p-4 text-left border-r border-white/10">Resultado esperado</th>
+                      <th className="p-4 text-left border-r border-white/10">Métrica principal</th>
+                      <th className="p-4 text-left border-r border-white/10">Criterio de éxito</th>
+                      <th className="p-4 text-center w-[80px]"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -475,77 +505,70 @@ export const PlanView: React.FC<PlanViewProps> = ({
                         <TaskRow key={task.id} task={task} handleTaskChange={handleTaskChange} onSaveTask={onSaveTask} onDeleteTask={onDeleteTask} />
                       ))
                     ) : (
-                      <tr><td colSpan={6} className="p-12 text-center text-slate-500 italic font-medium">No hay tareas añadidas. Haz clic en el botón de abajo para empezar.</td></tr>
+                      <tr><td colSpan={6} className="p-12 text-center text-slate-500 italic">No hay tareas añadidas.</td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
-              <div className="p-4 px-6 bg-slate-50 border-t border-slate-200 flex items-center gap-4">
+              <div className="p-4 px-6 bg-slate-50 border-t border-slate-200">
                 <button type="button"
-                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-emerald-200 active:scale-[0.97] ring-2 ring-emerald-300 ring-offset-1"
-                  onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10}
-                  aria-label="Añadir nueva tarea al plan">
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white border-none px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider cursor-pointer transition-all disabled:bg-slate-300 shadow-lg"
+                  onClick={onAddTask} disabled={!localPlan.id || isProductEmpty || tasks.length >= 10}>
                   <Plus size={20} aria-hidden="true" /> Añadir Tarea
                 </button>
-                {isProductEmpty && <span className="text-[0.85rem] text-slate-500 font-bold italic">* Debes definir un nombre de producto para añadir tareas.</span>}
               </div>
             </>
           )}
         </section>
 
-        {/* ── 3. Roles y logística ── */}
+        {/* ── 5. ROLES Y LOGÍSTICA ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0 flex items-center justify-between">
-            <span>3. Roles y logística</span>
-            {/* Dot: verde si moderador tiene valor (campo mínimo obligatorio de esta sección) */}
+            <span className="flex items-center gap-2">
+              5. Roles y Logística
+              <Tooltip text="Personas involucradas y recursos necesarios.">
+                <Info size={14} className="text-white/70" />
+              </Tooltip>
+            </span>
             <span
               className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-colors duration-500 ${localPlan.moderator ? 'bg-emerald-400' : 'bg-amber-400'
                 }`}
-              aria-label={localPlan.moderator ? 'Sección completa' : 'Sección incompleta — el campo Moderador es obligatorio'}
             />
           </h2>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="field-group">
-                <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700">
-                  Moderador: <span className="text-red-600" aria-hidden="true">*</span>
-                  <span className="sr-only">(obligatorio)</span>
-                </label>
+                <label htmlFor="moderator-name" className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1.5">Moderador: <span className="text-red-600">*</span></label>
                 <input id="moderator-name" type="text" maxLength={MAX_CHARS}
-                  aria-required="true" aria-invalid={warn.moderator || undefined}
                   className={fieldClass(warn.moderator, "w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white", 'error')}
-                  value={localPlan.moderator} placeholder="Nombre del facilitador"
+                  value={localPlan.moderator} placeholder="Facilitador"
                   onChange={(e) => handleChange({ moderator: e.target.value })}
                   onBlur={(e) => { touch('moderator'); handleAutoSave({ moderator: e.target.value }); }} />
                 <CharCounter value={localPlan.moderator} />
-                <FieldWarning show={warn.moderator} message="Ingrese el nombre del moderador." variant="error" />
               </div>
-
               <div className="field-group">
-                <label htmlFor="observer-name" className="text-sm font-bold text-slate-700">Observador:</label>
+                <label htmlFor="observer-name" className="text-sm font-bold text-slate-700 mb-1.5 block">Observador:</label>
                 <input id="observer-name" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
-                  value={localPlan.observer} placeholder="Nombre del que toma notas"
+                  value={localPlan.observer} placeholder="Opcional"
                   onChange={(e) => handleChange({ observer: e.target.value })}
                   onBlur={(e) => handleAutoSave({ observer: e.target.value })} />
                 <CharCounter value={localPlan.observer} />
               </div>
-
               <div className="field-group">
-                <label htmlFor="tools-used" className="text-sm font-bold text-slate-700">Herramientas:</label>
+                <label htmlFor="tools-used" className="text-sm font-bold text-slate-700 mb-1.5 block">Herramientas:</label>
                 <input id="tools-used" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
-                  value={localPlan.tools} placeholder="Ej: Figma, Zoom, Maze..."
+                  value={localPlan.tools} placeholder="Ej: Figma, Maze"
                   onChange={(e) => handleChange({ tools: e.target.value })}
                   onBlur={(e) => handleAutoSave({ tools: e.target.value })} />
                 <CharCounter value={localPlan.tools} />
               </div>
-
               <div className="field-group">
-                <label htmlFor="project-link" className="text-sm font-bold text-slate-700">Enlace:</label>
+                <label htmlFor="project-link" className="text-sm font-bold text-slate-700 mb-1.5 block">Enlace:</label>
                 <input id="project-link" type="text" maxLength={MAX_CHARS}
                   className="w-full p-3 border border-slate-200 rounded-lg text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-white"
-                  value={localPlan.link} placeholder="https://figma.com/proto/..."
+                  value={localPlan.link} placeholder="https://..."
                   onChange={(e) => handleChange({ link: e.target.value })}
                   onBlur={(e) => handleAutoSave({ link: e.target.value })} />
                 <CharCounter value={localPlan.link} />
@@ -554,18 +577,12 @@ export const PlanView: React.FC<PlanViewProps> = ({
           </div>
         </section>
 
-        {/* ── 4. Notas del moderador ── */}
+        {/* ── 6. NOTAS DEL MODERADOR ── */}
         <section className="section-block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          {/*
-            Sección 4 — sin dot obligatorio: las notas del moderador son
-            opcionales. El dot no aplica aquí para no crear falsa urgencia
-            en campos que no son críticos para el flujo.
-          */}
           <h2 className="bg-hierarchy-l1 text-white px-5 py-3 text-base font-bold uppercase tracking-wider m-0">
-            4. Notas del moderador
+            6. Notas del moderador
           </h2>
           <div className="p-6">
-            <label htmlFor="moderator-notes" className="sr-only">Notas adicionales del moderador</label>
             <AutoGrowTextarea id="moderator-notes"
               className="w-full p-4 border border-slate-200 rounded-xl text-base transition-all focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/5 bg-slate-50 focus:bg-white min-h-[120px]"
               value={localPlan.moderator_notes}

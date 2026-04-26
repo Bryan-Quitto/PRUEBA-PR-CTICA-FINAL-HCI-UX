@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useState, useEffect } from 'react';
 import { Finding, Severity, Priority, TaskStatus } from '../models/types';
 import { Trash2, Plus, CheckCircle, RefreshCcw, AlertTriangle, Info, Check, X, ChevronDown, Star } from 'lucide-react';
 import AutoGrowTextarea from '../components/AutoGrowTextarea';
 import { FieldWarning, CharCounter, fieldClass } from '../components/FieldWarning';
 import { clamp } from '../components/validation';
+import { Tooltip } from '../components/Tooltip';
 
 function useWindowWidth() {
   const [width, setWidth] = useState(() => window.innerWidth);
@@ -36,30 +36,6 @@ const STATUS_STYLES: Record<TaskStatus, { bg: string; text: string; border: stri
   Pendiente: { bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200', icon: '⏳' },
   'En progreso': { bg: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200', icon: '🔄' },
   Resuelto: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-200', icon: '✅' },
-};
-
-const Tooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => {
-  const [visible, setVisible] = useState(false);
-  const [coords, setCoords] = useState({ left: 0, top: 0 });
-  const triggerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (visible && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      setCoords({ left: rect.left + rect.width / 2, top: rect.top + window.scrollY - 8 });
-    }
-  }, [visible]);
-  return (
-    <div ref={triggerRef} onMouseEnter={() => setVisible(true)} onMouseLeave={() => setVisible(false)} className="relative inline-flex items-center group cursor-help">
-      {children}
-      {visible && createPortal(
-        <div className="absolute bg-slate-800 text-white px-3 py-2 rounded-lg text-[0.7rem] leading-snug w-[180px] z-[99999] shadow-2xl text-center pointer-events-none font-medium normal-case animate-in fade-in zoom-in-95 duration-200" style={{ left: coords.left, top: coords.top, transform: 'translate(-50%, -100%)' }}>
-          {text}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-transparent border-t-4 border-t-slate-800" />
-        </div>,
-        document.body
-      )}
-    </div>
-  );
 };
 
 interface FindingsViewProps {

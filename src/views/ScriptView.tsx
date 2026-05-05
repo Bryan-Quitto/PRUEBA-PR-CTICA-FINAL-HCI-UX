@@ -25,7 +25,7 @@ const TaskComboBox: React.FC<{
   value: string;
   planTasks: TestTask[];
   onChange: (value: string) => void;
-  onBlur?: () => void;
+  onBlur?: (val?: string) => void;
   placeholder?: string;
   id?: string;
   hasWarning?: boolean;
@@ -53,6 +53,7 @@ const TaskComboBox: React.FC<{
     const label = task.scenario || task.task_index;
     setQuery(label);
     onChange(label);
+    onBlur?.(label);
     setOpen(false);
   };
 
@@ -128,7 +129,10 @@ const ScriptTaskRow: React.FC<{
           hasWarning={warnText}
           placeholder="Ej. Imagina que quieres..."
           onChange={(val) => { touch('script_task_text'); handleChange('script_task_text', val); }}
-          onBlur={() => { touch('script_task_text'); onSaveTask(task.id!, { script_task_text: task.script_task_text }); }}
+          onBlur={(val) => { 
+            touch('script_task_text'); 
+            onSaveTask(task.id!, { script_task_text: val ?? task.script_task_text }); 
+          }}
         />
         <CharCounter value={task.script_task_text} />
         <FieldWarning show={warnText} message="El texto de la tarea no puede estar vacío." variant="error" />

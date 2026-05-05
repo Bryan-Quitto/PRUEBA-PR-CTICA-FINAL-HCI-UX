@@ -108,7 +108,16 @@ const ScriptTaskRow: React.FC<{
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const touch = (f: string) => setTouched(prev => ({ ...prev, [f]: true }));
 
+  const [showWarning, setShowWarning] = useState(false);
   const warnText = touched.script_task_text && (!task.script_task_text || task.script_task_text.trim() === '');
+
+  useEffect(() => {
+    if (warnText) {
+      const timer = setTimeout(() => setShowWarning(true), 150);
+      return () => clearTimeout(timer);
+    }
+    setShowWarning(false);
+  }, [warnText]);
 
   const handleChange = (field: keyof TestTask, value: string) => {
     handleTaskChange(task.id!, { [field]: clamp(value) });
@@ -126,7 +135,7 @@ const ScriptTaskRow: React.FC<{
           id={`script-text-${task.id}`}
           value={task.script_task_text || ''}
           planTasks={planTasks}
-          hasWarning={warnText}
+          hasWarning={showWarning}
           placeholder="Ej. Imagina que quieres..."
           onChange={(val) => { touch('script_task_text'); handleChange('script_task_text', val); }}
           onBlur={(val) => { 
@@ -135,7 +144,7 @@ const ScriptTaskRow: React.FC<{
           }}
         />
         <CharCounter value={task.script_task_text} />
-        <FieldWarning show={warnText} message="El texto de la tarea no puede estar vacío." variant="error" />
+        <FieldWarning show={showWarning} message="El texto de la tarea no puede estar vacío." variant="error" />
       </td>
 
       <td className="p-2">

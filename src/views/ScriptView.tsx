@@ -25,7 +25,7 @@ const TaskComboBox: React.FC<{
   value: string;
   planTasks: TestTask[];
   onChange: (value: string) => void;
-  onBlur?: () => void;
+  onBlur?: (val?: string) => void;
   placeholder?: string;
   id?: string;
   hasWarning?: boolean;
@@ -66,9 +66,19 @@ const TaskComboBox: React.FC<{
           className={fieldClass(!!hasWarning, `w-full p-2.5 pr-8 border border-slate-200 rounded-lg text-sm bg-transparent transition-all focus:bg-white focus:border-navy focus:ring-4 focus:ring-navy/5 outline-none font-medium`, 'error')}
           value={query}
           placeholder={placeholder || 'Seleccionar o escribir tarea...'}
-          onChange={e => { setQuery(clamp(e.target.value)); onChange(clamp(e.target.value)); setOpen(true); }}
+          onChange={e => { 
+            const val = clamp(e.target.value);
+            setQuery(val); 
+            onChange(val); 
+            setOpen(true); 
+          }}
           onFocus={() => setOpen(true)}
-          onBlur={() => { setOpen(false); onBlur?.(); }}
+          onBlur={() => { 
+            // Pequeño delay para permitir que el click en el dropdown ocurra antes del blur
+            setTimeout(() => {
+              if (!open) onBlur?.(query);
+            }, 200);
+          }}
         />
         <Search size={16} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden="true" />
       </div>
@@ -107,7 +117,16 @@ const ScriptTaskRow: React.FC<{
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const touch = (f: string) => setTouched(prev => ({ ...prev, [f]: true }));
 
+  const [showWarning, setShowWarning] = useState(false);
   const warnText = touched.script_task_text && (!task.script_task_text || task.script_task_text.trim() === '');
+
+  useEffect(() => {
+    if (warnText) {
+      const timer = setTimeout(() => setShowWarning(true), 150);
+      return () => clearTimeout(timer);
+    }
+    setShowWarning(false);
+  }, [warnText]);
 
   const handleChange = (field: keyof TestTask, value: string) => {
     handleTaskChange(task.id!, { [field]: clamp(value) });
@@ -125,13 +144,16 @@ const ScriptTaskRow: React.FC<{
           id={`script-text-${task.id}`}
           value={task.script_task_text || ''}
           planTasks={planTasks}
-          hasWarning={warnText}
+          hasWarning={showWarning}
           placeholder="Ej. Imagina que quieres..."
           onChange={(val) => { touch('script_task_text'); handleChange('script_task_text', val); }}
-          onBlur={() => { touch('script_task_text'); onSaveTask(task.id!, { script_task_text: task.script_task_text }); }}
+          onBlur={(val) => { 
+            touch('script_task_text'); 
+            onSaveTask(task.id!, { script_task_text: val ?? task.script_task_text }); 
+          }}
         />
         <CharCounter value={task.script_task_text} />
-        <FieldWarning show={warnText} message="El texto de la tarea no puede estar vacío." variant="error" />
+        <FieldWarning show={showWarning} message="El texto de la tarea no puede estar vacío." variant="error" />
       </td>
 
       <td className="p-2">

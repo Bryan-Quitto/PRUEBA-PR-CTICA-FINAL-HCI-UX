@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { TestPlan, Observation, Finding, PlanStatus } from '../models/types';
 import {
   ClipboardList, TrendingUp, Clock,
   AlertTriangle, Shield, Plus, ArrowRight,
   BarChart2, Users, Zap, Search, Trash2, Filter, Calendar, X
 } from 'lucide-react';
+import { Toast, ToastType } from '../components/Toast';
 
 interface GlobalDashboardProps {
   loading?: boolean;
@@ -52,7 +53,12 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
   const [dateFilter, setDateFilter] = useState<'Todas' | 'Recientes' | 'Este mes' | 'Mes pasado'>('Todas');
   const [page, setPage] = useState(1);
   const [planToDelete, setPlanToDelete] = useState<TestPlan | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
   const PAGE_SIZE = 10;
+
+  const showToast = useCallback((message: string, type: ToastType = 'success') => {
+    setToast({ message, type });
+  }, []);
 
   const global = useMemo(() => {
     const total  = allObservations.length;
@@ -157,6 +163,21 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
   const handleSearch = (val: string) => {
     setSearch(val);
     setPage(1);
+    if (val.length > 2) {
+      showToast(`Buscando: "${val}"`, 'info');
+    }
+  };
+
+  const handleStatusFilter = (val: string) => {
+    setStatusFilter(val as typeof statusFilter);
+    setPage(1);
+    showToast(`Filtro de estado: ${val}`, 'success');
+  };
+
+  const handleDateFilter = (val: string) => {
+    setDateFilter(val as typeof dateFilter);
+    setPage(1);
+    showToast(`Filtro de fecha: ${val}`, 'success');
   };
 
   const kpis = [
@@ -170,6 +191,14 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
 
   return (
     <main className="pb-12">
+      {/* ══ NOTIFICACIONES (TOASTS) ══ */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
 
       {/* ══ HERO GLOBAL ══ */}
       <section className="relative bg-gradient-to-br from-navy-dark via-navy to-navy-light rounded-b-[32px] p-8 md:p-12 mb-8 overflow-hidden text-white min-h-[260px]" aria-labelledby="gd-hero-title">
@@ -262,7 +291,7 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
             <StatusDropdown 
               value={statusFilter} 
               options={STATUS_FILTER_OPTIONS}
-              onChange={(val) => { setStatusFilter(val as typeof statusFilter); setPage(1); }}
+              onChange={handleStatusFilter}
               icon={Filter}
               headerLabel="Estado del Plan"
             />
@@ -271,7 +300,7 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
             <StatusDropdown 
               value={dateFilter} 
               options={DATE_FILTER_OPTIONS}
-              onChange={(val) => { setDateFilter(val as typeof dateFilter); setPage(1); }}
+              onChange={handleDateFilter}
               icon={Calendar}
               headerLabel="Rango de Fecha"
             />

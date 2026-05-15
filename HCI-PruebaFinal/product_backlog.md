@@ -12,3 +12,6 @@ Este backlog contiene las necesidades de usuario identificadas para mejorar la e
 
 ---
 **Nota:** El enfoque de este Sprint se centrará en el rediseño del Dashboard y el Feedback Visual.
+
+## Evidencia Scrum
+![Inicio de trabajo de la IA](./Evidencias/Evidencia-IA/Inicio%20de%20trabajo%20de%20la%20IA.jpg)

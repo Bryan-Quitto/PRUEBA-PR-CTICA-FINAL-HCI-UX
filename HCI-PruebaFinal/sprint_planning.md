@@ -21,3 +21,6 @@
 ## Capacidad del Equipo
 *   **UX Engineer (Gemini CLI):** 100% de dedicación.
 *   **Stakeholder (Estudiante):** Validación de avances.
+
+## Evidencia de Commits
+![Evidencia de commits](./Evidencias/Evidencia-Trabajo/Evidencia%20de%20commits.jpg)

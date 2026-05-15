@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Wireframe Mid-Fi - Global Dashboard Redesign</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-700 font-sans p-8">
+    <div class="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200">
+        <!-- Navigation Header -->
+        <header class="flex justify-between items-center px-8 py-4 border-b border-slate-100 bg-white">
+            <div class="font-bold text-xl text-slate-900">Usability<span class="text-indigo-600">App</span></div>
+            <nav class="flex gap-6 text-sm font-semibold">
+                <a href="#" class="text-indigo-600 border-b-2 border-indigo-600 pb-1">Dashboard</a>
+                <a href="#" class="hover:text-indigo-600 transition-colors">Planes</a>
+                <a href="#" class="hover:text-indigo-600 transition-colors">Reportes</a>
+            </nav>
+            <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+        </header>
+
+        <!-- Improved Hero Section (H8 Resolution) -->
+        <section class="p-10 bg-gradient-to-r from-indigo-50 to-white flex items-center justify-between border-b border-slate-100">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Panel de Control Global</h1>
+                <p class="text-slate-500 max-w-md">Analice la usabilidad de sus productos con datos consolidados y retroalimentación en tiempo real.</p>
+            </div>
+            <div class="flex flex-col items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <span class="text-sm font-bold text-slate-400 uppercase tracking-widest">Éxito Global</span>
+                <span class="text-5xl font-black text-indigo-600">82%</span>
+                <span class="mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase">Aceptable</span>
+            </div>
+        </section>
+
+        <main class="p-8">
+            <!-- KPI Summary -->
+            <div class="grid grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all cursor-default">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Planes Totales</p>
+                    <p class="text-2xl font-bold text-slate-900">12</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all cursor-default">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Observaciones</p>
+                    <p class="text-2xl font-bold text-slate-900">145</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all cursor-default">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Hallazgos</p>
+                    <p class="text-2xl font-bold text-slate-900 text-amber-600">28</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all cursor-default">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Críticos</p>
+                    <p class="text-2xl font-bold text-red-600">4</p>
+                </div>
+            </div>
+
+            <!-- Enhanced Table Area (H7 Resolution - Actions) -->
+            <div class="bg-white border border-slate-200 rounded-xl">
+                <div class="flex justify-between items-center p-4 border-b border-slate-100 bg-slate-50/50">
+                    <h2 class="font-bold text-slate-800">Planes de Prueba</h2>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-700 transition-all">+ Nuevo Plan</button>
+                </div>
+                <div class="p-0">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] tracking-widest border-b border-slate-100">
+                            <tr>
+                                <th class="p-4">Producto</th>
+                                <th class="p-4">Éxito</th>
+                                <th class="p-4">Estado</th>
+                                <th class="p-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-semibold text-slate-900">Portal Académico</td>
+                                <td class="p-4 font-mono text-green-600 font-bold">85%</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase">Activo</span></td>
+                                <td class="p-4 text-right flex justify-end gap-2">
+                                    <button class="p-1.5 text-slate-400 hover:text-indigo-600">Edit</button>
+                                    <button class="p-1.5 text-slate-400 hover:text-red-600">Del</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-4 font-semibold text-slate-900">App Móvil Estudiante</td>
+                                <td class="p-4 font-mono text-amber-600 font-bold">62%</td>
+                                <td class="p-4"><span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-full text-[10px] font-black uppercase">Borrador</span></td>
+                                <td class="p-4 text-right flex justify-end gap-2">
+                                    <button class="p-1.5 text-slate-400 hover:text-indigo-600">Edit</button>
+                                    <button class="p-1.5 text-slate-400 hover:text-red-600">Del</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Feedback Visual System (H9 Resolution) -->
+        <div class="fixed bottom-6 right-6 flex flex-col gap-2">
+            <div class="bg-white border-l-4 border-indigo-600 shadow-xl p-4 rounded-r-lg flex items-center gap-3 animate-bounce">
+                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">✓</div>
+                <div>
+                    <p class="text-xs font-black text-slate-900 uppercase">Éxito</p>
+                    <p class="text-xs text-slate-500">Los filtros han sido aplicados correctamente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 text-center text-slate-400 text-sm italic">Wireframe de Media Fidelidad (Mid-Fi) - Componentes y Feedback</div>
+</body>
+</html>

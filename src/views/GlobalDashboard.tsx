@@ -181,16 +181,25 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
   };
 
   const kpis = [
-    { value: allPlans.length,           label: 'Planes totales',    sub: 'registrados',              icon: <ClipboardList size={20} />, color: 'text-navy', bg: 'bg-blue-50' },
-    { value: allObservations.length,    label: 'Observaciones',     sub: 'en todos los planes',      icon: <Users         size={20} />, color: 'text-blue-900', bg: 'bg-indigo-50' },
-    { value: `${global.successRate}%`,  label: 'Tasa de éxito',     sub: global.usabilityScore,      icon: <TrendingUp    size={20} />, color: global.usabilityColor, bg: 'bg-green-50' },
-    { value: fmtTime(global.avgTime),   label: 'Tiempo promedio',   sub: 'por sesión global',        icon: <Clock         size={20} />, color: 'text-teal-900', bg: 'bg-teal-50' },
-    { value: allFindings.length,        label: 'Hallazgos',         sub: `${global.sev['Crítica'] + global.sev['Alta']} críticos`, icon: <AlertTriangle size={20} />, color: 'text-purple-900', bg: 'bg-purple-50' },
-    { value: `${global.resolvedRate}%`, label: 'Resueltos',         sub: `${global.resolved} de ${global.totalFindings}`, icon: <Shield size={20} />, color: 'text-emerald-900', bg: 'bg-emerald-50' },
+    { value: allPlans.length,           label: 'Planes totales',    sub: 'registrados',              icon: <ClipboardList size={20} />, color: 'text-navy', bg: 'bg-blue-50', tooltip: 'Total de proyectos de usabilidad creados.' },
+    { value: allObservations.length,    label: 'Observaciones',     sub: 'en todos los planes',      icon: <Users         size={20} />, color: 'text-blue-900', bg: 'bg-indigo-50', tooltip: 'Número total de pruebas realizadas con usuarios.' },
+    { value: `${global.successRate}%`,  label: 'Tasa de éxito',     sub: global.usabilityScore,      icon: <TrendingUp    size={20} />, color: global.usabilityColor, bg: 'bg-green-50', tooltip: 'Porcentaje de tareas completadas exitosamente.' },
+    { value: fmtTime(global.avgTime),   label: 'Tiempo promedio',   sub: 'por sesión global',        icon: <Clock         size={20} />, color: 'text-teal-900', bg: 'bg-teal-50', tooltip: 'Tiempo medio que tarda un usuario en completar tareas.' },
+    { value: allFindings.length,        label: 'Hallazgos',         sub: `${global.sev['Crítica'] + global.sev['Alta']} críticos`, icon: <AlertTriangle size={20} />, color: 'text-purple-900', bg: 'bg-purple-50', tooltip: 'Problemas de usabilidad detectados.' },
+    { value: `${global.resolvedRate}%`, label: 'Resueltos',         sub: `${global.resolved} de ${global.totalFindings}`, icon: <Shield size={20} />, color: 'text-emerald-900', bg: 'bg-emerald-50', tooltip: 'Hallazgos que ya han sido solucionados.' },
   ];
 
+  // H3: Control del Usuario - Cerrar modal con ESC
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPlanToDelete(null);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
   return (
-    <main className="pb-12">
+    <main className="pb-12 animate-in fade-in duration-500">
       {/* ══ NOTIFICACIONES (TOASTS) ══ */}
       {toast && (
         <Toast 
@@ -223,7 +232,10 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
 
           <div className="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-5 md:p-7 text-center flex flex-col gap-1 min-w-[160px]" aria-label={`Usabilidad global: ${global.usabilityScore}`}>
             {loading ? (
-              <div className="w-20 h-14 bg-white/20 rounded-lg animate-pulse mx-auto" />
+              <div className="space-y-2">
+                <div className="w-20 h-10 bg-white/20 rounded animate-pulse mx-auto" />
+                <div className="w-16 h-4 bg-white/20 rounded animate-pulse mx-auto" />
+              </div>
             ) : (
               <>
                 <span className="text-4xl md:text-5xl font-black leading-none tracking-tighter font-mono">
@@ -243,18 +255,31 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
       <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 mb-8" aria-label="Indicadores globales">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
-            <article key={i} className="bg-white rounded-xl border border-slate-200 h-[100px] animate-pulse" />
+            <article key={i} className="bg-white rounded-xl border border-slate-200 p-4 h-[100px] flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-100 rounded-xl animate-pulse" />
+              <div className="flex-1 space-y-2">
+                <div className="w-12 h-6 bg-slate-100 rounded animate-pulse" />
+                <div className="w-full h-3 bg-slate-100 rounded animate-pulse" />
+              </div>
+            </article>
           ))
         ) : (
           kpis.map((k, i) => (
-            <article key={i} className="bg-white border border-slate-200 border-t-[3px] rounded-xl p-4 flex items-start gap-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${k.bg} ${k.color}`} aria-hidden="true">
+            <article key={i} 
+              className="group bg-white border border-slate-200 border-t-[3px] rounded-xl p-4 flex items-start gap-3 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg relative"
+              title={k.tooltip}
+            >
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${k.bg} ${k.color} transition-transform group-hover:scale-110`} aria-hidden="true">
                 {k.icon}
               </div>
               <div className="flex flex-col gap-0.5 min-w-0">
                 <h3 className={`text-xl font-extrabold leading-none tracking-tight font-mono ${k.color}`}>{k.value}</h3>
                 <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">{k.label}</span>
                 <span className="text-xs text-slate-500 font-semibold truncate">{k.sub}</span>
+              </div>
+              {/* Tooltip visible al hover (H2) */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
+                {k.tooltip}
               </div>
             </article>
           ))
@@ -440,6 +465,24 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
                         </span>
                       </div>
 
+                      {/* Acciones Rápidas (H7 Solution - Nueva columna visible) */}
+                      <div className="hidden lg:flex justify-end pr-4 opacity-0 group-hover:opacity-100 transition-opacity gap-1.5">
+                        <button 
+                          className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-navy hover:border-navy transition-all"
+                          title="Explorar hallazgos"
+                          onClick={(e) => { e.stopPropagation(); onSelectPlan(plan); }}
+                        >
+                          <BarChart2 size={14} />
+                        </button>
+                        <button 
+                          className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-navy hover:border-navy transition-all"
+                          title="Añadir observación"
+                          onClick={(e) => { e.stopPropagation(); onSelectPlan(plan); }}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
+
                       {/* Flecha */}
                       <div className="flex items-center justify-center text-slate-300 transition-all group-hover:text-navy group-hover:translate-x-1">
                         <ArrowRight size={20} aria-hidden="true" />
@@ -532,6 +575,15 @@ export const GlobalDashboard: React.FC<GlobalDashboardProps> = ({
         )}
         </div>
       </section>
+
+      {/* ══ BOTÓN VOLVER ARRIBA ══ */}
+      <button 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-24 right-8 w-12 h-12 bg-white border border-slate-200 rounded-full shadow-lg flex items-center justify-center text-slate-400 hover:text-navy hover:shadow-xl transition-all animate-in zoom-in duration-300 z-[1000]"
+        title="Volver arriba"
+      >
+        <Plus className="rotate-45" size={24} />
+      </button>
 
       {/* ══ SEVERIDAD GLOBAL ══ */}
       {allFindings.length > 0 && (
